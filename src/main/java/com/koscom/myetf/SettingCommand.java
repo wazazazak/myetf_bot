@@ -68,6 +68,7 @@ public class SettingCommand extends MyetfCommand{
         message.setReplyMarkup(markupInline);
 
         try {
+        	m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();

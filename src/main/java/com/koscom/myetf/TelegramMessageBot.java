@@ -3,15 +3,10 @@ package com.koscom.myetf;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class TelegramMessageBot extends TelegramLongPollingBot { //
@@ -74,6 +69,19 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
             {
             	SettingCommand settingCommand = new SettingCommand(this, update);
             	settingCommand.execute();
+            }
+            else
+            {
+                AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
+                answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
+                answerCallbackQuery.setShowAlert(false);
+                answerCallbackQuery.setText("");
+                try {
+					execute(answerCallbackQuery);
+				} catch (TelegramApiException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
     }
