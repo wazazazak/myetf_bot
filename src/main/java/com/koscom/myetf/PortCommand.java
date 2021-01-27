@@ -111,7 +111,7 @@ public class PortCommand extends MyetfCommand{
         int nCircleWidth = (int)(img.getWidth() * 0.7);
         int nCircleStart = (int)((img.getWidth() - nCircleWidth) * 0.5);
         
-        int nLastAngle = 0;
+        float dLastAngle = 0.f;
         int nlastPos = nCircleStart * 2 + nCircleWidth;
 
         Font font = g2d.getFont();
@@ -134,9 +134,9 @@ public class PortCommand extends MyetfCommand{
         {
             g2d.setColor(s.cColor);
             
-            int nAngle = (int) Math.ceil(360 * 0.01 * s.nRate);
-            g2d.fillArc(nCircleStart, nCircleStart, nCircleWidth, nCircleWidth, nLastAngle, nAngle);
-            nLastAngle += nAngle;
+            float dAngle = (float) Math.ceil(360 * 0.01 * s.nRate);
+            g2d.fillArc(nCircleStart, nCircleStart, nCircleWidth, nCircleWidth, (int) Math.ceil(dLastAngle), (int) Math.ceil(dAngle));
+            dLastAngle += dAngle;
             //int nHeight = (int)(s.nRate * (double)img.getHeight() * 0.01);
             //g2d.fillRect(0, nLast, img.getWidth(), nLast + nHeight);
             g2d.setColor(Color.gray);
@@ -149,11 +149,11 @@ public class PortCommand extends MyetfCommand{
             
             g2d.setColor(Color.WHITE);
             String str = s.strName;
-            g2d.drawString(str, (int)(img.getWidth() * 0.5 - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.7));
+            g2d.drawString(str, (int)(img.getWidth() * 0.5 - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.68));
 
             str = s.nRate + "%";
-            g2d.drawString(str, (int)((img.getWidth() * 0.05 + img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.7));
-            g2d.drawString(str, (int)(((img.getWidth() - img.getWidth() * 0.2)+ img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.7));
+            g2d.drawString(str, (int)((img.getWidth() * 0.05 + img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.68));
+            g2d.drawString(str, (int)(((img.getWidth() - img.getWidth() * 0.2)+ img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.68));
             
             nlastPos += (int)(img.getWidth() * 0.1);
         }
