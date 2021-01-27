@@ -28,7 +28,7 @@ public class RebalCommand extends MyetfCommand{
 			
 			// 0. DB - 보유 주식 수 조회
 			/* etfpossession/chatId/account */
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1/110123213123");
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
 			
 			/*
 			 *       종목     | 종목코드 | 보유수량
@@ -55,7 +55,7 @@ public class RebalCommand extends MyetfCommand{
 			/**
 			 * 2. 목표 포트폴리오 비중으로 변경하기 위한 매수, 매도 수량 계산
 			 */
-			jsonTxt = sendGet("http://localhost:8000/etfportion/1/110123213123");
+			jsonTxt = sendGet("http://localhost:8000/etfportion/1502506769/160635473367600099");
 			
 			JSONParser jsonParser = new JSONParser();
 			JSONArray jsonArr = (JSONArray)jsonParser.parse(jsonTxt);
@@ -103,7 +103,7 @@ public class RebalCommand extends MyetfCommand{
 				 */
 				/* /etfpossession/{chatId}/{account}/{sectorCode} */
 				String jsonHoldQt = new String();
-				jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1/110123213123/"+sectorCode);
+				jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/"+sectorCode);
 				
 	            Object objHoldQt = jsonParser.parse(jsonHoldQt);
 	            JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;

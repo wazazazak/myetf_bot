@@ -30,7 +30,7 @@ public class MenuCommand extends MyetfCommand{
 			
 			// 0. DB - 보유 주식 수 조회
 			/* etfpossession/chatId/account */
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1/110123213123");
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
 			
 			/*
 			 *       종목     | 종목코드 | 보유수량
