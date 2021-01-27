@@ -20,6 +20,7 @@ import com.koscom.myetf.commands.AccountCommand;
 import com.koscom.myetf.commands.MenuCommand;
 import com.koscom.myetf.commands.PortCommand;
 import com.koscom.myetf.commands.RebalCommand;
+import com.koscom.myetf.commands.SettingArgCommand;
 import com.koscom.myetf.commands.SettingCommand;
 
 @Component
@@ -46,7 +47,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 	}
 
 	public enum BotCallbackData {
-		rebal, myport, account, setting, menu
+		rebal, myport, account, setting, menu, settingarg
 	}
 
 	/**
@@ -78,16 +79,25 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 					.compareToIgnoreCase(BotCallbackData.menu.name() + ":") == 0) {
 				MenuCommand menuCommand = new MenuCommand(this, update);
 				menuCommand.execute();
-			} else if (BotCallbackData.rebal.name().compareToIgnoreCase(stringMessage) == 0) {
+			}
+			else if (StringUtils.left(stringMessage, BotCallbackData.settingarg.name().length() + 1)
+					.compareToIgnoreCase(BotCallbackData.settingarg.name() + ":") == 0) {
+				SettingArgCommand settingArgCommand = new SettingArgCommand(this, update);
+				settingArgCommand.execute();
+			} 
+			else if (BotCallbackData.rebal.name().compareToIgnoreCase(stringMessage) == 0) {
 				RebalCommand rebalCommand = new RebalCommand(this, update);
 				rebalCommand.execute();
-			} else if (BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0) {
+			}
+			else if (BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0) {
 				PortCommand portCommand = new PortCommand(this, update);
 				portCommand.execute();
-			} else if (BotCallbackData.setting.name().compareToIgnoreCase(stringMessage) == 0) {
+			}
+			else if (BotCallbackData.setting.name().compareToIgnoreCase(stringMessage) == 0) {
 				SettingCommand settingCommand = new SettingCommand(this, update);
 				settingCommand.execute();
-			} else {
+			}
+			else {
 				AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
 				answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
 				answerCallbackQuery.setShowAlert(false);
