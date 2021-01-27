@@ -1,24 +1,30 @@
 package com.koscom.myetf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import commands.PortCommand;
+import commands.PriceCommand;
 import commands.RebalCommand;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
-public class TelegramMessageBot extends TelegramLongPollingBot { //
-    private final String BOT_NAME = "myetf_bot"; //Bot Name
-    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+public class TelegramMessageBot extends TelegramLongPollingBot { 
+	
+//    private final String BOT_NAME = "myetf_bot"; //Bot Name
+//    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+    
+	// 한이
+    private final String BOT_NAME = "myETF_testBot"; //Bot Name
+    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
 
     @Override
     public String getBotUsername() {
@@ -31,7 +37,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
     }
 
     enum BotCallbackData {
-    	rebal, myport
+    	rebal, myport, price
     }
     
     /**
@@ -54,6 +60,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
             List < InlineKeyboardButton > rowInline = new ArrayList < > ();
             rowInline.add(new InlineKeyboardButton().setText("내 포트폴리오 확인").setCallbackData(BotCallbackData.myport.name()));
             rowInline.add(new InlineKeyboardButton().setText("리밸런싱").setCallbackData(BotCallbackData.rebal.name()));
+            rowInline.add(new InlineKeyboardButton().setText("시세조회").setCallbackData(BotCallbackData.price.name()));
             rowsInline.add(rowInline);
             markupInline.setKeyboard(rowsInline);
             message.setReplyMarkup(markupInline);
@@ -78,6 +85,11 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
             {
             	PortCommand portCommand = new PortCommand(this, update);
             	portCommand.execute();
+            }
+            else if(BotCallbackData.price.name().compareTo(stringMessage) == 0)
+            {
+            	PriceCommand priceCommand = new PriceCommand(this, update);
+            	priceCommand.execute();
             }
         }
     }
