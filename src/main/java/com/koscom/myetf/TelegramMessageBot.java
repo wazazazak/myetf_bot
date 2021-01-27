@@ -63,14 +63,32 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
         {
             CallbackQuery callbackquery = update.getCallbackQuery();
             String stringMessage = callbackquery.getData();
+            
+            String result = new String();
+            switch(stringMessage) {
+        	case "1" :	// 내 포트폴리오 확인
+        		result = "포트폴리오";
+        		break;
+        	
+        	case "2" :	// 리밸런싱
+        		result = "리밸런싱";
+        		break;
+        		
+        	default:	// 그외
+        		break;
+            }
+            
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
             answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
             answerCallbackQuery.setShowAlert(false);
             answerCallbackQuery.setText(stringMessage);
+            //answerCallbackQuery.setText(result);
 
             SendMessage message = new SendMessage();
             message.setChatId(callbackquery.getMessage().getChatId());
-            message.setText(stringMessage);
+            //message.setText(stringMessage);
+            message.setText(result);
+            
             try {
                 execute(answerCallbackQuery);
                 execute(message);
