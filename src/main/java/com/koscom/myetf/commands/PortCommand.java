@@ -73,7 +73,7 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1/110123213123");
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);

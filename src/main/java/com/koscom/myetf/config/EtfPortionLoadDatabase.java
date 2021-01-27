@@ -2,7 +2,7 @@ package com.koscom.myetf.config;
 
 import com.koscom.myetf.entity.EtfPortion;
 import com.koscom.myetf.entity.EtfPortionRepository;
-import com.koscom.myetf.entity.EtfPossession;
+import com.koscom.myetf.entity.EtfPortion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +19,17 @@ class EtfPortionLoadDatabase {
   CommandLineRunner etfPortioninitDatabase(EtfPortionRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new EtfPortion("1", "110123213123", "091180", 30)));
-      log.info("Preloading " + repository.save(new EtfPortion("1", "110123213123", "091160", 40)));
-      log.info("Preloading " + repository.save(new EtfPortion("1", "110123213123", "091170", 25)));
-      log.info("Preloading " + repository.save(new EtfPortion("1", "110123213123", "999999", 5)));
-      log.info("Preloading " + repository.save(new EtfPortion("2", "11011123314", "S503", 10)));
+	  	log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160635473367600099", "091180", 30)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160635473367600099", "091160", 50)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160635473367600099", "091170", 15)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160635473367600099", "999999", 5)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "091160", 50)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "091150", 20)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "091150", 20)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "999999", 10)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "091170", 50)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "091170", 45)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "999999", 5)));
     };
   }
 }

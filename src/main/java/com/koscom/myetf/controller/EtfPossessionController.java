@@ -22,11 +22,16 @@ class EtfPossessionController {
     this.repository = repository;
   }
 
-  @GetMapping("/etfpossession")
-  List<EtfPossession> all() {
-    return repository.findAll();
+//  @GetMapping("/etfpossession")
+//  List<EtfPossession> all() {
+//    return repository.findAll();
+//  }
+  @GetMapping("/etfpossession/{chatId}")
+  List<EtfPossession> findByChatId(@PathVariable String chatId) {
+    return repository.findByChatId(chatId);
   }
 
+  
   @GetMapping("/etfpossession/{chatId}/{account}")
   List<EtfPossession> findByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
     return repository.findByChatIdAndAccount(chatId, account);

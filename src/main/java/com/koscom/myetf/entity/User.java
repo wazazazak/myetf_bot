@@ -14,8 +14,8 @@ public class User {
 
     private String chatId;
     private String name;
-    private String accountName;
     private String account;
+    private String accountName;
     private int totMoney;
 
     public User() {

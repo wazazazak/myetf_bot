@@ -3,6 +3,7 @@ package com.koscom.myetf.controller;
 import com.koscom.myetf.entity.EtfPortion;
 import com.koscom.myetf.entity.EtfPortionRepository;
 import com.koscom.myetf.entity.EtfPortion;
+import com.koscom.myetf.entity.EtfPortion;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,15 @@ class EtfPortionController {
     this.repository = repository;
   }
 
-  @GetMapping("/etfportion")
-  List<EtfPortion> all() {
-    return repository.findAll();
+//  @GetMapping("/etfportion")
+//  List<EtfPortion> all() {
+//    return repository.findAll();
+//  }
+  @GetMapping("/etfportion/{chatId}")
+  List<EtfPortion> findByChatId(@PathVariable String chatId) {
+    return repository.findByChatId(chatId);
   }
-
+  
   @GetMapping("/etfportion/{chatId}/{account}")
   List<EtfPortion> findByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
     return repository.findByChatIdAndAccount(chatId, account);
