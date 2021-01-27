@@ -1,4 +1,4 @@
-package com.koscom.mymyetf.controller;
+package com.koscom.myetf.controller;
 
 import com.koscom.myetf.entity.TransactionLog;
 import com.koscom.myetf.entity.TransactionLogRepository;
