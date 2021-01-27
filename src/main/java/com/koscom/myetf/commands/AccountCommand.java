@@ -38,7 +38,7 @@ public class AccountCommand extends MyetfCommand {
         message.setText("MYETF\n계좌선택");
         try { // get method test
 //            System.out.println(user.getChatId());
-            sendGet("http://localhost:8000/user");
+//            sendGet("http://localhost:8000/user");
         } catch (Exception e){
             e.printStackTrace();
         }
