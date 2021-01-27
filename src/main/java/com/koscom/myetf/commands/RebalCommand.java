@@ -2,6 +2,7 @@ package com.koscom.myetf.commands;
 
 import java.text.DecimalFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,8 +12,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import com.koscom.myetf.entity.EtfPortion;
 
 public class RebalCommand extends MyetfCommand{
 	public RebalCommand(TelegramLongPollingBot telebot, Update update) {
@@ -98,41 +97,111 @@ public class RebalCommand extends MyetfCommand{
 				System.out.println("■■■■■ 종목코드 >> " + sectorCode + " / 목표보유비중 >> " + sectorPortion + "% / 목표보유금액 >> " + sectorTotalPrice
 										+ "/ 현재 시세 >> " + sectorPrice + " / 목표보유수량 >> " + targetQt);
 				
-				/**
-				 * 2-3. 목표 보유 수량과 현재 보유 수량의 차이 구하기
-				 */
+
+				// 종목별 보유 수량 조회
 				/* /etfpossession/{chatId}/{account}/{sectorCode} */
 				String jsonHoldQt = new String();
 				jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/"+sectorCode);
 				
-	            Object objHoldQt = jsonParser.parse(jsonHoldQt);
-	            JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;
-	            System.out.println("섹터 [" + jsonObjHoldQt.get("sectorCode") + "] 현재 보유 수량 >> " + jsonObjHoldQt.get("sectorPossession"));
-	            
-	            /**
-	             * 2-4. 매도/매수 수량 계산
-	             * 목표 보유 수량 +- 현재 보유 수량
+				if( StringUtils.isNotBlank(jsonHoldQt) ) {
+		            Object objHoldQt = jsonParser.parse(jsonHoldQt);
+		            JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;
+				//JSONObject jsonObjHoldQt = (JSONObject) jsonParser.parse(jsonHoldQt);
+	            	System.out.println("섹터 [" + jsonObjHoldQt.get("sectorCode") + "] 현재 보유 수량 >> " + jsonObjHoldQt.get("sectorPossession"));
+	            } else {
+	            	System.out.println("섹터 [" + sectorCode + "] 현재 보유 수량 >> 미보유");
+	            }
+				
+				/**
+	             * 2-3. [ETF_POSSESSION] 최종 보유 수량 update/insert
 	             */
-	            int holdingQt = Integer.parseInt(jsonObjHoldQt.get("sectorPossession").toString());
-				if( targetQt > holdingQt ) {	// 목표수량 > 현재수량 => 매수
+				/* http://localhost:8000/etfpossession */
+				// [ETF_POSSESSION] 최종 수량으로 업데이트 or 인서트
+				// 보유 상태면 PUT , 미보유상태면 POST
+//					{ 
+//						"charId":"1"
+//						, "account":"1111"
+//						, "sectorCode":"S504"
+//						, "sectorPossession":200
+//					}
+				
+				JSONObject jsonObjPossession = new JSONObject();
+				//jsonObj.put("chatId", m_update.getMessage().getChatId());
+				jsonObjPossession.put("chatId"		, "1502506769");
+				jsonObjPossession.put("account"		, "160635473367600099");
+				jsonObjPossession.put("sectorCode"	, sectorCode);
+				jsonObjPossession.put("sectorPossession"	, targetQt);
+				String strPossession = jsonObjPossession.toJSONString();
+				
+				System.out.println("섹터 [" + sectorCode + "] 최종 수량 업데이트/인서트 >> " + strPossession);
+				
+				String resultJson = new String();
+				if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
+					
+					// update (PUT)
+					resultJson = sendPut("http://localhost:8000/etfpossession", strPossession);
+					
+				} else {	// 미보유
+					
+					// insert (POST)
+					resultJson = sendPost("http://localhost:8000/etfpossession", strPossession);
+				}
+				
+				System.out.println("섹터 [" + sectorCode + "] 최종 수량 업데이트/인서트 결과 >> " + resultJson);
+				
+				
+				/**
+	             * 2-4. [TRANSACTION_LOG] 매수/매도 수량 insert
+	             * 목표 보유 수량과 현재 보유 수량의 차이 구하기
+	             */
+	            int holdingQt = 0;
+	            
+	            // 보유 수량 (미보유시 0)
+	            if( StringUtils.isNotBlank(jsonHoldQt) ) {
+	            	Object objHoldQt = jsonParser.parse(jsonHoldQt);
+		            JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;
+	            	holdingQt = Integer.parseInt(jsonObjHoldQt.get("sectorPossession").toString());
+	            }
+	            
+	            if( targetQt > holdingQt ) {	// 목표수량 > 현재수량 => 매수
 					// 매수 수량
 					int buyQt = targetQt - holdingQt;
-					System.out.println("섹터 [" + jsonObjHoldQt.get("sectorCode") + "] 매수 수량 >> " + buyQt);
+					System.out.println("섹터 [" + sectorCode + "] 매수 수량 >> " + buyQt);
 					
-					// 보유 상태면 PUT , 미보유상태면 POST
-//					{
-//					    "chatId": "1",
-//					    "account": "110123213123",
-//					    "sectorCode": "091180",
-//					    "sectorPossession": 20
-//					}
+					JSONObject jsonObjTran = new JSONObject();
+					//jsonObj.put("chatId", m_update.getMessage().getChatId());
+					jsonObjTran.put("chatId"		, "1502506769");
+					jsonObjTran.put("account"		, "160635473367600099");
+					jsonObjTran.put("sectorCode"	, sectorCode);
+					jsonObjTran.put("sellBuyDiv"	, "2" );	// 1:매도, 2:매수 
+					jsonObjTran.put("quantity"		, buyQt);
+					
 					
 				} else {	// 현재수량 > 목표수량 => 매도
 					// 매도 수량
 					int sellQt = holdingQt - targetQt;
-					System.out.println("섹터 [" + jsonObjHoldQt.get("sectorCode") + "] 매도 수량 >> " + sellQt);
+					System.out.println("섹터 [" + sectorCode + "] 매도 수량 >> " + sellQt);
 					
+					JSONObject jsonObjTran = new JSONObject();
+					//jsonObj.put("chatId", m_update.getMessage().getChatId());
+					jsonObjTran.put("chatId"		, "1502506769");
+					jsonObjTran.put("account"		, "160635473367600099");
+					jsonObjTran.put("sectorCode"	, sectorCode);
+					jsonObjTran.put("sellBuyDiv"	, "1" );	// 1:매도, 2:매수 
+					jsonObjTran.put("quantity"		, sellQt);
 				}
+				
+					/* http://localhost:8000/transactionlog */
+					// [TRANSACTION_LOG] 매도/매수 수량 인서트
+//					{
+//					    "charId":"1",
+//					    "account":"1111",
+//					    "sectorCode":"S501",
+//					    "sellBuyDiv":"1",
+//					    "quantity":100,
+//					    "price":2000
+//					}
+				
 				
 				
 				
