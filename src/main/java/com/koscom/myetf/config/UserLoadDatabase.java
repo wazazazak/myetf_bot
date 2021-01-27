@@ -1,4 +1,4 @@
-package com.koscom.mymyetf.config;
+package com.koscom.myetf.config;
 
 import com.koscom.myetf.entity.User;
 import com.koscom.myetf.entity.UserRepository;
