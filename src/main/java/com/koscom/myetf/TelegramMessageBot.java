@@ -1,30 +1,22 @@
 package com.koscom.myetf;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import commands.PortCommand;
-import commands.PriceCommand;
-import commands.RebalCommand;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
-public class TelegramMessageBot extends TelegramLongPollingBot { 
-	
-//    private final String BOT_NAME = "myetf_bot"; //Bot Name
-//    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
-    
-	// 한이
-    private final String BOT_NAME = "myETF_testBot"; //Bot Name
-    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
+public class TelegramMessageBot extends TelegramLongPollingBot { //
+    private final String BOT_NAME = "myetf_bot"; //Bot Name
+    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
 
     @Override
     public String getBotUsername() {
@@ -37,7 +29,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot {
     }
 
     enum BotCallbackData {
-    	rebal, myport, price
+    	rebal, myport, account, setting, menu
     }
     
     /**
@@ -48,48 +40,36 @@ public class TelegramMessageBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
 
-            //TODO:컴포넌트 및 메서드 분리
-            //String stringMessage = update.getMessage().getText();
-            SendMessage message = new SendMessage();
-
-            message.setChatId(update.getMessage().getChatId());
-            message.setText("MYETF");
-
-            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-            List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
-            List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-            rowInline.add(new InlineKeyboardButton().setText("내 포트폴리오 확인").setCallbackData(BotCallbackData.myport.name()));
-            rowInline.add(new InlineKeyboardButton().setText("리밸런싱").setCallbackData(BotCallbackData.rebal.name()));
-            rowInline.add(new InlineKeyboardButton().setText("시세조회").setCallbackData(BotCallbackData.price.name()));
-            rowsInline.add(rowInline);
-            markupInline.setKeyboard(rowsInline);
-            message.setReplyMarkup(markupInline);
-
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+        	if(update.getMessage().getText().compareToIgnoreCase("/start") == 0)
+        	{
+            	AccountCommand accountCommand = new AccountCommand(this, update);
+            	accountCommand.execute();      		
+        	}
         }
         if(update.hasCallbackQuery())
         {
             CallbackQuery callbackquery = update.getCallbackQuery();
             String stringMessage = callbackquery.getData();
             
-            if(BotCallbackData.rebal.name().compareTo(stringMessage) == 0)
+            if(StringUtils.left(stringMessage, BotCallbackData.menu.name().length() + 1).compareToIgnoreCase(BotCallbackData.menu.name() + ":") == 0)
+            {
+            	MenuCommand menuCommand = new MenuCommand(this, update);
+            	menuCommand.execute();
+            }
+            else if(BotCallbackData.rebal.name().compareToIgnoreCase(stringMessage) == 0)
             {
             	RebalCommand rebalCommand = new RebalCommand(this, update);
             	rebalCommand.execute();
             }
-            else if(BotCallbackData.myport.name().compareTo(stringMessage) == 0)
+            else if(BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0)
             {
             	PortCommand portCommand = new PortCommand(this, update);
             	portCommand.execute();
             }
-            else if(BotCallbackData.price.name().compareTo(stringMessage) == 0)
+            else if(BotCallbackData.setting.name().compareToIgnoreCase(stringMessage) == 0)
             {
-            	PriceCommand priceCommand = new PriceCommand(this, update);
-            	priceCommand.execute();
+            	SettingCommand settingCommand = new SettingCommand(this, update);
+            	settingCommand.execute();
             }
         }
     }
