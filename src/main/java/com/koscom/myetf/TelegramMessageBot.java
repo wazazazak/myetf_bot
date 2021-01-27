@@ -15,8 +15,12 @@ import java.util.List;
 
 @Component
 public class TelegramMessageBot extends TelegramLongPollingBot { //
-    private final String BOT_NAME = "myetf_bot"; //Bot Name
-    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+//    private final String BOT_NAME = "myetf_bot"; //Bot Name
+//    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+    
+    // 한이
+    private final String BOT_NAME = "myETF_testBot"; //Bot Name
+    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
 
     @Override
     public String getBotUsername() {
