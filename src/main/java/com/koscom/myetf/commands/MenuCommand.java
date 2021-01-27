@@ -57,7 +57,7 @@ public class MenuCommand extends MyetfCommand{
 	        DecimalFormat formatter = new DecimalFormat("###,###");
 	     	String fmTotalAmt = formatter.format(totalAmt);
 	        String msgText = new String();
-			msgText += "현재 자산 총액은 "+ fmTotalAmt + "원입니다.";
+			msgText += "현재 자산 총액은 "+ fmTotalAmt + "원입니다.\n포트폴리오를 확인하시겠습니까?";
 
 			message.setText(msgText);
 	        message.setChatId(callbackquery.getMessage().getChatId());
