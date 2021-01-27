@@ -20,11 +20,15 @@ class EtfPortionController {
     this.repository = repository;
   }
 
-  @GetMapping("/etfportion")
-  List<EtfPortion> all() {
-    return repository.findAll();
+//  @GetMapping("/etfportion")
+//  List<EtfPortion> all() {
+//    return repository.findAll();
+//  }
+  @GetMapping("/etfportion/{chatId}")
+  List<EtfPortion> findByChatId(@PathVariable String chatId) {
+    return repository.findByChatId(chatId);
   }
-
+  
   @GetMapping("/etfportion/{chatId}/{account}")
   List<EtfPortion> findByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
     return repository.findByChatIdAndAccount(chatId, account);
@@ -32,14 +36,7 @@ class EtfPortionController {
 
   @GetMapping("/etfportion/{chatId}/{account}/{sectorCode}")
   EtfPortion findByChatIdAndAccountAndSectorCode(@PathVariable String chatId, @PathVariable String account, @PathVariable String sectorCode) {
-		EtfPortion etfPortion = repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
-//		System.out.println(etfPortion);
-		if(etfPortion == null) {
-			return new EtfPortion(chatId, account, sectorCode, 0);
-		} else {
-			return etfPortion;
-		}
-//    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
   }
 
   @Transactional

@@ -22,11 +22,16 @@ class EtfPossessionController {
     this.repository = repository;
   }
 
-  @GetMapping("/etfpossession")
-  List<EtfPossession> all() {
-    return repository.findAll();
+//  @GetMapping("/etfpossession")
+//  List<EtfPossession> all() {
+//    return repository.findAll();
+//  }
+  @GetMapping("/etfpossession/{chatId}")
+  List<EtfPossession> findByChatId(@PathVariable String chatId) {
+    return repository.findByChatId(chatId);
   }
 
+  
   @GetMapping("/etfpossession/{chatId}/{account}")
   List<EtfPossession> findByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
     return repository.findByChatIdAndAccount(chatId, account);
@@ -34,14 +39,7 @@ class EtfPossessionController {
 
   @GetMapping("/etfpossession/{chatId}/{account}/{sectorCode}")
   EtfPossession findByChatIdAndAccountAndSectorCode(@PathVariable String chatId, @PathVariable String account, @PathVariable String sectorCode) {
-	EtfPossession etfPossession = repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
-//	System.out.println(etfPossession);
-	if(etfPossession == null) {
-		return new EtfPossession(chatId, account, sectorCode, 0);
-	} else {
-		return etfPossession;
-	}
-//    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
   }
   
   @Transactional
