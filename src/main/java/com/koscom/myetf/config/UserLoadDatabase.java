@@ -17,9 +17,9 @@ class UserLoadDatabase {
   CommandLineRunner userinitDatabase(UserRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new User("1502506769", "kim", "1111", "키움증권", 200000)));
-      log.info("Preloading " + repository.save(new User("1502506769", "kim", "3333", "NH증권", 200000)));
-      log.info("Preloading " + repository.save(new User("2", "lee", "2222", "키움증권", 100000)));
+      log.info("Preloading " + repository.save(new User("1502506769", "김기혁", "160635473367600099", "다이아몬드증권", 30000000)));
+      log.info("Preloading " + repository.save(new User("1502506769", "김기혁", "160646584478700099", "STAR증권", 50000000)));
+      log.info("Preloading " + repository.save(new User("1351754505", "장한이", "160657695589800099", "사이버증권", 80000000)));
     };
   }
 }

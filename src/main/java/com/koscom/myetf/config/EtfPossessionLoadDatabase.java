@@ -2,6 +2,8 @@ package com.koscom.myetf.config;
 
 import com.koscom.myetf.entity.EtfPossession;
 import com.koscom.myetf.entity.EtfPossessionRepository;
+import com.koscom.myetf.entity.User;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -17,12 +19,17 @@ class EtfPossessionLoadDatabase {
   CommandLineRunner etfPossessioninitDatabase(EtfPossessionRepository repository) {
 
     return args -> {
-    	log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091180", 30)));
-        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091160", 50)));
-        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091170", 15)));
-        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "999999", 5)));
-        log.info("Preloading " + repository.save(new EtfPossession("1", "3333", "S502", 100)));
-        log.info("Preloading " + repository.save(new EtfPossession("2", "2222", "S503", 200)));
+    	log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160635473367600099", "091180", 30)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160635473367600099", "091160", 50)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160635473367600099", "091170", 15)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160635473367600099", "999999", 5)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160646584478700099", "091160", 50)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160646584478700099", "091150", 10)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160646584478700099", "091150", 10)));
+        log.info("Preloading " + repository.save(new EtfPossession("1502506769", "160646584478700099", "999999", 10)));
+        log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "091170", 80)));
+        log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "091170", 90)));
+        log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "999999", 20)));
     };
   }
 }

@@ -34,7 +34,14 @@ class EtfPossessionController {
 
   @GetMapping("/etfpossession/{chatId}/{account}/{sectorCode}")
   EtfPossession findByChatIdAndAccountAndSectorCode(@PathVariable String chatId, @PathVariable String account, @PathVariable String sectorCode) {
-    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+	EtfPossession etfPossession = repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+//	System.out.println(etfPossession);
+	if(etfPossession == null) {
+		return new EtfPossession(chatId, account, sectorCode, 0);
+	} else {
+		return etfPossession;
+	}
+//    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
   }
   
   @Transactional

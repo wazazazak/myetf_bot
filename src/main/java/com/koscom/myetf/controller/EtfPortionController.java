@@ -3,6 +3,7 @@ package com.koscom.myetf.controller;
 import com.koscom.myetf.entity.EtfPortion;
 import com.koscom.myetf.entity.EtfPortionRepository;
 import com.koscom.myetf.entity.EtfPortion;
+import com.koscom.myetf.entity.EtfPortion;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,14 @@ class EtfPortionController {
 
   @GetMapping("/etfportion/{chatId}/{account}/{sectorCode}")
   EtfPortion findByChatIdAndAccountAndSectorCode(@PathVariable String chatId, @PathVariable String account, @PathVariable String sectorCode) {
-    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+		EtfPortion etfPortion = repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
+//		System.out.println(etfPortion);
+		if(etfPortion == null) {
+			return new EtfPortion(chatId, account, sectorCode, 0);
+		} else {
+			return etfPortion;
+		}
+//    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
   }
 
   @Transactional
