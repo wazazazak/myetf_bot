@@ -9,7 +9,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,9 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -32,8 +34,30 @@ public class PortCommand extends MyetfCommand{
 	public PortCommand(TelegramLongPollingBot telebot, Update update) {
 		super(telebot, update);
 		// TODO Auto-generated constructor stub
+	    arColors = new ArrayList<>();
+	    arColors.add(new Color(0xFF6D63));
+	    arColors.add(new Color(0xFF9652));
+	    arColors.add(new Color(0xFFCE43));
+	    arColors.add(new Color(0xFFE700));
+	    arColors.add(new Color(0xBEE74B));
+	    arColors.add(new Color(0x73D26C));
+	    arColors.add(new Color(0x63EBDD));
+	    arColors.add(new Color(0x73B5E5));
+	    arColors.add(new Color(0xA58BD5));
+	    arColors.add(new Color(0x8BA5D5));
+	    arColors.add(new Color(0xA58BA5));
+	    arColors.add(new Color(0xEB63DD));
+	    arColors.add(new Color(0xEBDD63));
+	    arColors.add(new Color(0xFF5296));
+	    arColors.add(new Color(0x5296FF));
+	    arColors.add(new Color(0xCE43FF));
+	    arColors.add(new Color(0x43CEFF));
+	    arColors.add(new Color(0xE74BBE));
+	    arColors.add(new Color(0xE7BE4B));
 	}
 
+	public List<Color> arColors;
+	
 	public void execute()
 	{
         CallbackQuery callbackquery = m_update.getCallbackQuery();
@@ -41,17 +65,42 @@ public class PortCommand extends MyetfCommand{
         answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
         answerCallbackQuery.setShowAlert(false);
         answerCallbackQuery.setText("");
-        
+
+
+		String jsonTxt = new String();
+
         List<sector> arSector = new ArrayList<>();
-        arSector.add(new sector(20, "자동차", new Color(0xFF6D63)));
-        arSector.add(new sector(15, "반도체", new Color(0xFF9652)));
-        arSector.add(new sector(7, "건강", new Color(0xFFCE43)));
-        arSector.add(new sector(8, "은행", new Color(0xFFE700)));
-        arSector.add(new sector(6, "에너지화학", new Color(0xBEE74B)));
-        arSector.add(new sector(5, "철강", new Color(0x73D26C)));
-        arSector.add(new sector(4, "미디어통신", new Color(0x63EBDD)));
-        arSector.add(new sector(32, "건설", new Color(0x73B5E5)));
-        arSector.add(new sector(3, "증권", new Color(0xA58BD5)));
+		// 0. DB - 보유 주식 수 조회
+		/* etfpossession/chatId/account */
+		try {
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/1/110123213123");
+
+        	JSONParser jsonParser = new JSONParser();
+			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
+			for(int i=0;i<jsonarr.size();i++){
+				String subJsonStr = jsonarr.get(i).toString();
+				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
+				String sectorCode = subJsonObj.get("sectorCode").toString();
+				int sectorRate = Integer.parseInt(subJsonObj.get("sectorPossession").toString());
+				
+				String name = "";
+				if( "999999".equals(sectorCode) )
+				{
+					name = "현금";
+				}
+				else
+				{
+					name = getProdName(sectorCode);
+				}
+				arSector.add(new sector(sectorRate, name, arColors.size() > i ? arColors.get(i) : Color.black));
+			}
+			
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+			return;
+		}
+		
         String fileName = new String(RandomStringUtils.randomAlphanumeric(10) + ".png");
         try {
 			saveImage(fileName, arSector);
@@ -129,6 +178,12 @@ public class PortCommand extends MyetfCommand{
         font = font.deriveFont((float)(img.getWidth() * 0.07 * 0.6));
         g2d.setFont(font);
         FontMetrics metrics = g2d.getFontMetrics(font);
+
+        g2d.setColor(Color.BLACK);
+        String strCol = "희망 비율";
+        g2d.drawString(strCol, (int)((img.getWidth() * 0.05 + img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(strCol) * 0.5), nlastPos - (int)(img.getWidth() * 0.07 * 0.68));
+        strCol = "현재 비율";
+        g2d.drawString(strCol, (int)(((img.getWidth() - img.getWidth() * 0.2)+ img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(strCol) * 0.5), nlastPos - (int)(img.getWidth() * 0.07 * 0.68));
         
         for(sector s : arSector)
         {

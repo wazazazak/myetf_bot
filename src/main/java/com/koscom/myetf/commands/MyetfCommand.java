@@ -102,6 +102,48 @@ public abstract class MyetfCommand {
         return price;
 	}
 	
+	public String getProdName(String issuecode) {
+		BufferedReader br = null;
+		String name = "";
+		
+        try {
+        	String marketcode = "kospi";	// 시장구분
+        	//String issuecode = "091180";		// 종목코드
+        	
+        	String urlstr = "https://sandbox-apigw.koscom.co.kr/v2/market/stocks"
+        			+ "/"+marketcode+"/"+issuecode+"/master"
+        			+ "?apikey=l7xx269a193d8850413389aab28e01032509";
+        	URL url = new URL(urlstr);
+        	HttpURLConnection urlconnection = (HttpURLConnection) url.openConnection();
+        	urlconnection.setRequestMethod("GET");
+        	br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(), "UTF-8"));
+        	
+        	String json = new String();
+        	String line = new String();
+        	
+        	while((line = br.readLine()) != null) {
+        		json = json + line + "\n";
+        	}
+        	
+        	//System.out.println("json >> " + json);
+        	
+        	// JSON 문자열 JAVA로 변환
+        	JSONParser jsonParser = new JSONParser();
+            Object obj = jsonParser.parse(json);
+            JSONObject jsonObject = (JSONObject) obj;
+            //System.out.println("result >> " + jsonObject.get("result"));
+            
+            String result = jsonObject.get("result").toString();
+            Object resultObj = jsonParser.parse(result);
+            JSONObject resultObject = (JSONObject) resultObj;
+            name = resultObject.get("isuKorAbbrv").toString();
+        	
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+		}
+        
+        return name;
+	}
 	/**
 	 * 자산 총액 구하기
 	 * @param issuecode
