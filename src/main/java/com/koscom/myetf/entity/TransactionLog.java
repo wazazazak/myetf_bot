@@ -12,7 +12,7 @@ public class TransactionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String charId;
+    private String chatId;
     private String account;
     private String sectorCode;
     private String sellBuyDiv; // 1 - sell, 2 - buy
@@ -23,8 +23,8 @@ public class TransactionLog {
     public TransactionLog() {
     }
 
-    public TransactionLog(String charId, String account, String sectorCode, String sellBuyDiv, int quantity, int price, String createdTime) {
-        this.charId = charId;
+    public TransactionLog(String chatId, String account, String sectorCode, String sellBuyDiv, int quantity, int price, String createdTime) {
+        this.chatId = chatId;
         this.account = account;
         this.sectorCode = sectorCode;
         this.sellBuyDiv = sellBuyDiv;
@@ -33,12 +33,12 @@ public class TransactionLog {
         this.createdTime = createdTime;
     }
 
-    public String getCharId() {
-        return charId;
+    public String getChatId() {
+        return chatId;
     }
 
-    public void setCharId(String charId) {
-        this.charId = charId;
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
     public String getAccount() {
@@ -93,7 +93,7 @@ public class TransactionLog {
     public String toString() {
         return "TransactionLog{" +
                 "id=" + id +
-                ", charId='" + charId + '\'' +
+                ", chatId='" + chatId + '\'' +
                 ", account='" + account + '\'' +
                 ", sectorCode='" + sectorCode + '\'' +
                 ", sellBuyDiv='" + sellBuyDiv + '\'' +

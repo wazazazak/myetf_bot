@@ -1,4 +1,4 @@
-package com.koscom.mymyetf.config;
+package com.koscom.myetf.config;
 
 import com.koscom.myetf.entity.User;
 import com.koscom.myetf.entity.UserRepository;
@@ -17,9 +17,9 @@ class UserLoadDatabase {
   CommandLineRunner userinitDatabase(UserRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new User("1", "kim", "1111", 200000)));
-      log.info("Preloading " + repository.save(new User("1", "kim", "3333", 200000)));
-      log.info("Preloading " + repository.save(new User("2", "lee", "2222", 100000)));
+      log.info("Preloading " + repository.save(new User("1502506769", "kim", "1111", "키움증권", 200000)));
+      log.info("Preloading " + repository.save(new User("1502506769", "kim", "3333", "NH증권", 200000)));
+      log.info("Preloading " + repository.save(new User("2", "lee", "2222", "키움증권", 100000)));
     };
   }
 }

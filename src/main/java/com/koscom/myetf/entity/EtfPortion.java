@@ -12,7 +12,7 @@ class EtfPortion {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String charId;
+  private String chatId;
   private String account;
   private String sectorCode;
   private double sectorPortion;
@@ -20,15 +20,15 @@ class EtfPortion {
   public EtfPortion() {
   }
 
-  public EtfPortion(String charId, String account, String sectorCode, double sectorPortion) {
-    this.charId = charId;
+  public EtfPortion(String chatId, String account, String sectorCode, double sectorPortion) {
+    this.chatId = chatId;
     this.account = account;
     this.sectorCode = sectorCode;
     this.sectorPortion = sectorPortion;
   }
 
-  public String getCharId() {
-    return charId;
+  public String getChatId() {
+    return chatId;
   }
 
   public String getAccount() {
@@ -51,7 +51,7 @@ class EtfPortion {
   public String toString() {
     return "EtfPortion{" +
             "id=" + id +
-            ", charId='" + charId + '\'' +
+            ", chatId='" + chatId + '\'' +
             ", account='" + account + '\'' +
             ", sectorCode='" + sectorCode + '\'' +
             ", sectorPortion=" + sectorPortion +

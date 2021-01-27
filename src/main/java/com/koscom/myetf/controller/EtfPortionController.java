@@ -19,25 +19,25 @@ class EtfPortionController {
     this.repository = repository;
   }
 
-  // Aggregate root
-  // tag::get-aggregate-root[]
   @GetMapping("/etfportion")
   List<EtfPortion> all() {
     return repository.findAll();
   }
-  // end::get-aggregate-root[]
 
-  @GetMapping("/etfportion/{charId}/{account}")
-  List<EtfPortion> findByCharIdAndAccount(@PathVariable String charId, @PathVariable String account) {
-    return repository.findByCharIdAndAccount(charId, account);
+  @GetMapping("/etfportion/{chatId}/{account}")
+  List<EtfPortion> findByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
+    return repository.findByChatIdAndAccount(chatId, account);
+  }
+
+  @GetMapping("/etfportion/{chatId}/{account}/{sectorCode}")
+  EtfPortion findByChatIdAndAccountAndSectorCode(@PathVariable String chatId, @PathVariable String account, @PathVariable String sectorCode) {
+    return repository.findByChatIdAndAccountAndSectorCode(chatId, account, sectorCode);
   }
 
   @Transactional
   @PutMapping("/etfportion")
   EtfPortion updateEtfPortion(@RequestBody EtfPortion newEtfPortion) {
-//    System.out.printf("%s, %s, %s\n", newEtfPortion.getCharId(), newEtfPortion.getAccount(), newEtfPortion.getSectorCode());
-    EtfPortion etfPortion = repository.findByCharIdAndAccountAndSectorCode(newEtfPortion.getCharId(), newEtfPortion.getAccount(), newEtfPortion.getSectorCode());
-//    System.out.println(etfPortion);
+    EtfPortion etfPortion = repository.findByChatIdAndAccountAndSectorCode(newEtfPortion.getChatId(), newEtfPortion.getAccount(), newEtfPortion.getSectorCode());
     etfPortion.update(newEtfPortion.getSectorPortion());
 
     return repository.save(etfPortion);
@@ -48,33 +48,4 @@ class EtfPortionController {
   EtfPortion newEtfportion(@RequestBody EtfPortion newEtfportion) {
     return repository.save(newEtfportion);
   }
-//
-//  // Single item
-//
-//  @GetMapping("/etfportion/{id}")
-//  EtfPortion one(@PathVariable Long id) {
-//
-//    return repository.findById(id)
-//      .orElseThrow(() -> new EtfPortionNotFoundException(id));
-//  }
-//
-//  @PutMapping("/etfportion/{id}")
-//  EtfPortion replaceEtfPortion(@RequestBody EtfPortion newEtfPortion, @PathVariable Long id) {
-//
-//    return repository.findById(id)
-//      .map(EtfPortion -> {
-//        EtfPortion.setName(newEtfPortion.getName());
-//        EtfPortion.setRole(newEtfPortion.getRole());
-//        return repository.save(EtfPortion);
-//      })
-//      .orElseGet(() -> {
-//        newEtfPortion.setId(id);
-//        return repository.save(newEtfPortion);
-//      });
-//  }
-//
-//  @DeleteMapping("/etfportion/{id}")
-//  void deleteEtfPortion(@PathVariable Long id) {
-//    repository.deleteById(id);
-//  }
 }

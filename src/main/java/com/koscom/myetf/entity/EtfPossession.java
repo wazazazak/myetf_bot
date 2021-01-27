@@ -12,7 +12,7 @@ class EtfPossession {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String charId;
+  private String chatId;
   private String account;
   private String sectorCode;
   private int sectorPossession;
@@ -20,15 +20,15 @@ class EtfPossession {
   public EtfPossession() {
   }
 
-  public EtfPossession(String charId, String account, String sectorCode, int sectorPossession) {
-    this.charId = charId;
+  public EtfPossession(String chatId, String account, String sectorCode, int sectorPossession) {
+    this.chatId = chatId;
     this.account = account;
     this.sectorCode = sectorCode;
     this.sectorPossession = sectorPossession;
   }
 
-  public String getCharId() {
-    return charId;
+  public String getChatId() {
+    return chatId;
   }
 
   public String getAccount() {
@@ -51,7 +51,7 @@ class EtfPossession {
   public String toString() {
     return "EtfPossession{" +
             "id=" + id +
-            ", charId='" + charId + '\'' +
+            ", chatId='" + chatId + '\'' +
             ", account='" + account + '\'' +
             ", sectorCode='" + sectorCode + '\'' +
             ", sectorPossession=" + sectorPossession +

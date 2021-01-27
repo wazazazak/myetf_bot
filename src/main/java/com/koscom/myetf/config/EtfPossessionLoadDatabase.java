@@ -17,9 +17,12 @@ class EtfPossessionLoadDatabase {
   CommandLineRunner etfPossessioninitDatabase(EtfPossessionRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new EtfPossession("1", "1111", "S501", 500)));
-      log.info("Preloading " + repository.save(new EtfPossession("1", "3333", "S502", 100)));
-      log.info("Preloading " + repository.save(new EtfPossession("2", "2222", "S503", 200)));
+    	log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091180", 30)));
+        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091160", 50)));
+        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "091170", 15)));
+        log.info("Preloading " + repository.save(new EtfPossession("1", "110123213123", "999999", 5)));
+        log.info("Preloading " + repository.save(new EtfPossession("1", "3333", "S502", 100)));
+        log.info("Preloading " + repository.save(new EtfPossession("2", "2222", "S503", 200)));
     };
   }
 }

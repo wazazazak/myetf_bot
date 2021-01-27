@@ -1,4 +1,4 @@
-package com.koscom.mymyetf.controller;
+package com.koscom.myetf.controller;
 
 import com.koscom.myetf.entity.TransactionLog;
 import com.koscom.myetf.entity.TransactionLogRepository;
@@ -29,14 +29,14 @@ class TransactionLogController {
         return repository.save(newTransactionLog);
     }
 
-    @GetMapping("/transactionlog/{charId}")
-    List<TransactionLog> transactionLogByCharId(@PathVariable String charId) {
-        return repository.findByCharId(charId);
+    @GetMapping("/transactionlog/{chatId}")
+    List<TransactionLog> transactionLogByChatId(@PathVariable String chatId) {
+        return repository.findByChatId(chatId);
     }
 
-    @GetMapping("/transactionlog/{charId}/{account}")
-    List<TransactionLog> transactionLogByCharIdAndAccount(@PathVariable String charId, @PathVariable String account) {
-        return repository.findByCharIdAndAccount(charId, account);
+    @GetMapping("/transactionlog/{chatId}/{account}")
+    List<TransactionLog> transactionLogByChatIdAndAccount(@PathVariable String chatId, @PathVariable String account) {
+        return repository.findByChatIdAndAccount(chatId, account);
     }
 
 }
