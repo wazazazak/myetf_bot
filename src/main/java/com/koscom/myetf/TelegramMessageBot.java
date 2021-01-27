@@ -2,13 +2,15 @@ package com.koscom.myetf;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import commands.PortCommand;
+import commands.RebalCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,6 @@ import java.util.List;
 public class TelegramMessageBot extends TelegramLongPollingBot { //
     private final String BOT_NAME = "myetf_bot"; //Bot Name
     private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
-    private final String CHAT_ID = "1560682736"; //Chat ID
 
     @Override
     public String getBotUsername() {
@@ -29,6 +30,10 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
         return AUTH_KEY;
     }
 
+    enum BotCallbackData {
+    	rebal, myport
+    }
+    
     /**
      * 메세지를 받으면 처리하는 로직
      * @param update
@@ -47,8 +52,8 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
             InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
             List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
             List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-            rowInline.add(new InlineKeyboardButton().setText("내 포트폴리오 확인").setCallbackData("1"));
-            rowInline.add(new InlineKeyboardButton().setText("리밸런싱").setCallbackData("2"));
+            rowInline.add(new InlineKeyboardButton().setText("내 포트폴리오 확인").setCallbackData(BotCallbackData.myport.name()));
+            rowInline.add(new InlineKeyboardButton().setText("리밸런싱").setCallbackData(BotCallbackData.rebal.name()));
             rowsInline.add(rowInline);
             markupInline.setKeyboard(rowsInline);
             message.setReplyMarkup(markupInline);
@@ -64,52 +69,16 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
             CallbackQuery callbackquery = update.getCallbackQuery();
             String stringMessage = callbackquery.getData();
             
-            String result = new String();
-            switch(stringMessage) {
-        	case "1" :	// 내 포트폴리오 확인
-        		result = "포트폴리오";
-        		break;
-        	
-        	case "2" :	// 리밸런싱
-        		result = "리밸런싱";
-        		break;
-        		
-        	default:	// 그외
-        		break;
+            if(BotCallbackData.rebal.name().compareTo(stringMessage) == 0)
+            {
+            	RebalCommand rebalCommand = new RebalCommand(this, update);
+            	rebalCommand.execute();
             }
-            
-            AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-            answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-            answerCallbackQuery.setShowAlert(false);
-            answerCallbackQuery.setText(stringMessage);
-            //answerCallbackQuery.setText(result);
-
-            SendMessage message = new SendMessage();
-            message.setChatId(callbackquery.getMessage().getChatId());
-            //message.setText(stringMessage);
-            message.setText(result);
-            
-            try {
-                execute(answerCallbackQuery);
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            else if(BotCallbackData.myport.name().compareTo(stringMessage) == 0)
+            {
+            	PortCommand portCommand = new PortCommand(this, update);
+            	portCommand.execute();
             }
-        }
-    }
-
-    /**
-     * 메세지 전달
-     * @param sendMessage
-     */
-    public void sendMessage(String sendMessage) {
-        SendMessage message = new SendMessage()
-                .setChatId(CHAT_ID)
-                .setText(sendMessage);
-        try {
-            execute(message); // Sending our message object to user
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
         }
     }
 }
