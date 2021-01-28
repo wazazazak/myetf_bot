@@ -41,12 +41,12 @@ public class AccountCommand extends MyetfCommand {
     public void execute() {
         SendMessage message = new SendMessage();
 
-        message.setChatId(m_update.getMessage().getChatId());
+        message.setChatId(GetChatId());
         message.setText("MYETF\n계좌선택");
         try { // get method test
 //            System.out.println(user.getChatId());
         	String jsonTxt = new String();
-			jsonTxt = sendGet("http://localhost:8000/user/" + m_update.getMessage().getChatId());
+			jsonTxt = sendGet("http://localhost:8000/user/" + GetChatId());
 			JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
 	        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
@@ -68,7 +68,7 @@ public class AccountCommand extends MyetfCommand {
         }
 
         try {
-        	m_telebot.mSessionData.get(m_update.getMessage().getChatId().toString()).strState = BotCallbackData.account.name();
+        	m_telebot.mSessionData.get(GetChatId().toString()).strState = BotCallbackData.account.name();
             m_telebot.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();

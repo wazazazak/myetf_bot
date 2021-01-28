@@ -12,7 +12,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.koscom.myetf.TelegramMessageBot;
 
@@ -28,6 +30,35 @@ public abstract class MyetfCommand {
 		m_update = update;
     }
 	
+	protected Long GetChatId()
+	{
+		if(m_update.hasCallbackQuery())
+		{
+			return m_update.getCallbackQuery().getMessage().getChatId();
+		}
+		else if(m_update.hasMessage())
+		{
+			return m_update.getMessage().getChatId();
+		}
+		return 0L;
+	}
+
+	protected void AnswerQuery()
+	{
+		if(m_update.hasCallbackQuery())
+		{
+	        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
+	        answerCallbackQuery.setCallbackQueryId(m_update.getCallbackQuery().getId());
+	        answerCallbackQuery.setShowAlert(false);
+	        answerCallbackQuery.setText("");
+			try {
+				m_telebot.execute(answerCallbackQuery);
+			} catch (TelegramApiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	/**
 	 * DB 조회
 	 * @param targetUrl
@@ -192,6 +223,7 @@ public abstract class MyetfCommand {
 	}
 	
 	public String getProdName(String issuecode) {
+		if(issuecode.compareTo("999999") == 0) return "현금";
 		BufferedReader br = null;
 		String name = "";
 		
