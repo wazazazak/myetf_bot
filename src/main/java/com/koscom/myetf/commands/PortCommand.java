@@ -79,7 +79,8 @@ public class PortCommand extends MyetfCommand{
 				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
 				String sectorCode = subJsonObj.get("sectorCode").toString();
 				int sectorQ = (int) Float.parseFloat(subJsonObj.get("sectorPossession").toString());
-				totalMoney += getPrice(sectorCode) * sectorQ;
+				int nMoney = (int) (getPrice(sectorCode) * sectorQ);
+				totalMoney += nMoney;
 
 				String name = "";
 				if( "999999".equals(sectorCode) )
@@ -90,15 +91,46 @@ public class PortCommand extends MyetfCommand{
 				{
 					name = getProdName(sectorCode);
 				}
-				arSector.add(new sector(sectorQ, name, arColors.size() > i ? arColors.get(i) : Color.black));
+				arSector.add(new sector(0, nMoney, name, arColors.size() > i ? arColors.get(i) : Color.black));
 			}
 			
 			if(totalMoney != 0)
 			{
 				for(sector sec : arSector)
 				{
-					sec.nRate *= 100.f / totalMoney;
+					sec.nRateCur = Math.round(sec.nRateCur * (100.f / totalMoney));
 				}	
+			}
+
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + GetChatId().toString() + "/" + data.strAccount);
+			jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
+			for(int i=0;i<jsonarr.size();i++){
+				String subJsonStr = jsonarr.get(i).toString();
+				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
+				String sectorCode = subJsonObj.get("sectorCode").toString();
+				int sectorP = (int) Float.parseFloat(subJsonObj.get("sectorPortion").toString());
+				
+				String name = "";
+				if( "999999".equals(sectorCode) )
+				{
+					name = "현금";
+				}
+				else
+				{
+					name = getProdName(sectorCode);
+				}
+				
+				boolean bFound = false;;
+				for(sector sec : arSector)
+				{
+					if(sec.strName.compareTo(name) == 0)
+					{
+						sec.nRate = sectorP;
+						bFound = true;
+						break;
+					}
+				}
+				if(!bFound) arSector.add(new sector(sectorP, 0, name, arColors.size() > i ? arColors.get(i) : Color.black));
 			}
 			
 		} catch (Exception e2) {
@@ -143,13 +175,15 @@ public class PortCommand extends MyetfCommand{
 
 	public class sector
 	{
-		sector(int nRate, String strName, Color cColor)
+		sector(int nRate, int nRateCur, String strName, Color cColor)
 		{
 			this.nRate = nRate;
+			this.nRateCur = nRateCur;
 			this.strName = strName;
 			this.cColor = cColor;
 		}
 		int nRate;
+		int nRateCur;
 		String strName;
 		Color cColor;
 	}
@@ -197,10 +231,10 @@ public class PortCommand extends MyetfCommand{
         
         for(sector s : arSector)
         {
-        	if(s.nRate == 0) continue;
+        	if(s.nRateCur == 0 && s.nRate == 0) continue;
             g2d.setColor(s.cColor);
             
-            float dAngle = (float) Math.ceil(360 * 0.01 * s.nRate);
+            float dAngle = (float) Math.ceil(360 * 0.01 * s.nRateCur);
             g2d.fillArc(nCircleStart, nCircleStart, nCircleWidth, nCircleWidth, (int) Math.ceil(dLastAngle), (int) Math.ceil(dAngle));
             dLastAngle += dAngle;
             //int nHeight = (int)(s.nRate * (double)img.getHeight() * 0.01);
@@ -219,6 +253,12 @@ public class PortCommand extends MyetfCommand{
 
             str = s.nRate + "%";
             g2d.drawString(str, (int)((img.getWidth() * 0.05 + img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.68));
+
+            if(Math.abs(s.nRate - s.nRateCur) > 1)
+            {
+                g2d.setColor(Color.RED);
+            }
+            str = s.nRateCur + "%";
             g2d.drawString(str, (int)(((img.getWidth() - img.getWidth() * 0.2)+ img.getWidth() * 0.15 * 0.5) - metrics.stringWidth(str) * 0.5), nlastPos + (int)(img.getWidth() * 0.07 * 0.68));
             
             nlastPos += (int)(img.getWidth() * 0.1);

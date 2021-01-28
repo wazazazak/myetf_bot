@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,12 +23,15 @@ public abstract class MyetfCommand {
 	
 	TelegramMessageBot m_telebot;
 	Update m_update;
+	private HashMap<String, String> mProdNames;
 	
 	public abstract void execute();
 	
 	public MyetfCommand(TelegramLongPollingBot telebot, Update update) {
 		m_telebot = (TelegramMessageBot)telebot;
 		m_update = update;
+		mProdNames = new HashMap<>();
+		mProdNames.put("999999", "현금");
     }
 	
 	protected Long GetChatId()
@@ -222,9 +226,11 @@ public abstract class MyetfCommand {
         
         return price;
 	}
-	
+
 	public String getProdName(String issuecode) {
-		if(issuecode.compareTo("999999") == 0) return "현금";
+		
+		if(mProdNames.containsKey(issuecode)) return mProdNames.get(issuecode);
+		
 		BufferedReader br = null;
 		String name = "";
 		
@@ -264,6 +270,7 @@ public abstract class MyetfCommand {
         	System.out.println(e.getMessage());
 		}
         
+        mProdNames.put(issuecode, name);
         return name;
 	}
 	/**
