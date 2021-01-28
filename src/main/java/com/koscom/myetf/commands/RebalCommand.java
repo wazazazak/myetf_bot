@@ -249,9 +249,11 @@ public class RebalCommand extends MyetfCommand{
 						resultJson = sendPost("http://localhost:8000/transactionlog", strJsonTran);
 						
 						// [결과 메시지] 매수 수량
-						DecimalFormat formatter = new DecimalFormat("###,###");	// 금액 포맷팅
-				     	String fmSectorPrice = formatter.format(sectorPrice);
-						resultMsgRebal += "[" + sectorName + "] 주당 가격 : " + fmSectorPrice + "원 / " + buyQt + "주 매수\n";
+						if( buyQt > 0 ) {
+							DecimalFormat formatter = new DecimalFormat("###,###");	// 금액 포맷팅
+							String fmSectorPrice = formatter.format(sectorPrice);
+							resultMsgRebal += "[" + sectorName + "] 주당 가격 : " + fmSectorPrice + "원 / " + buyQt + "주 매수\n";
+						}
 						
 						map.put("sectorName", sectorName);
 						
@@ -277,9 +279,11 @@ public class RebalCommand extends MyetfCommand{
 						resultJson = sendPost("http://localhost:8000/transactionlog", strJsonTran);
 						
 						// [결과 메시지] 매도 수량
-				        DecimalFormat formatter = new DecimalFormat("###,###");	// 금액 포맷팅
-				     	String fmSectorPrice = formatter.format(sectorPrice);
-						resultMsgRebal += "[" + sectorName + "] 주당 가격 : " + fmSectorPrice + "원 / " + sellQt + "주 매도\n";
+						if( sellQt > 0 ) {
+							DecimalFormat formatter = new DecimalFormat("###,###");	// 금액 포맷팅
+							String fmSectorPrice = formatter.format(sectorPrice);
+							resultMsgRebal += "[" + sectorName + "] 주당 가격 : " + fmSectorPrice + "원 / " + sellQt + "주 매도\n";
+						}
 						
 					}
 					
