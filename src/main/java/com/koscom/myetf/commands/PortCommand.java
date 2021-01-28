@@ -75,7 +75,7 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
@@ -83,7 +83,7 @@ public class PortCommand extends MyetfCommand{
 				String subJsonStr = jsonarr.get(i).toString();
 				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
 				String sectorCode = subJsonObj.get("sectorCode").toString();
-				int sectorRate = Integer.parseInt(subJsonObj.get("sectorPossession").toString());
+				int sectorRate = (int) Float.parseFloat(subJsonObj.get("sectorPortion").toString());
 				
 				String name = "";
 				if( "999999".equals(sectorCode) )
