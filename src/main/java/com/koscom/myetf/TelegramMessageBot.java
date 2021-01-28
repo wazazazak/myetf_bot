@@ -24,16 +24,17 @@ import com.koscom.myetf.commands.RebalCommand;
 import com.koscom.myetf.commands.SettingArgCommand;
 import com.koscom.myetf.commands.SettingCommand;
 import com.koscom.myetf.commands.SettingExportCommand;
+import com.koscom.myetf.commands.SettingImportCommand;
 import com.koscom.myetf.commands.SettingRateCommand;
 
 @Component
 public class TelegramMessageBot extends TelegramLongPollingBot { //
-//    private final String BOT_NAME = "myetf_bot"; //Bot Name
-//    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+    private final String BOT_NAME = "myetf_bot"; //Bot Name
+    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
 
 	// 한이
-    private final String BOT_NAME = "myETF_testBot"; //Bot Name
-    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
+//    private final String BOT_NAME = "myETF_testBot"; //Bot Name
+//    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
 
 	// 기혁
 //	private final String BOT_NAME = "myetftestbot"; // Bot Name
@@ -183,6 +184,11 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 					&& data.strState.compareTo(BotCallbackData.settingend.name()) == 0) {
 				SettingExportCommand settingExCommand = new SettingExportCommand(this, update);
 				settingExCommand.execute();
+			}
+			else if (BotCallbackData.settingimport.name().compareToIgnoreCase(stringMessage) == 0
+					&& data.strState.compareTo(BotCallbackData.menu.name()) == 0) {
+				SettingImportCommand settingImCommand = new SettingImportCommand(this, update);
+				settingImCommand.execute();
 			}
 			else {
 				AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();

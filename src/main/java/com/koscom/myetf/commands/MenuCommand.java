@@ -67,6 +67,9 @@ public class MenuCommand extends MyetfCommand{
 	        rowInline.add(new InlineKeyboardButton().setText("확인하기").setCallbackData(BotCallbackData.myport.name()));
 	        rowInline.add(new InlineKeyboardButton().setText("설정하기").setCallbackData(BotCallbackData.setting.name()));
 	        rowsInline.add(rowInline);
+	        rowInline = new ArrayList < > ();
+	        rowInline.add(new InlineKeyboardButton().setText("공유코드로 가져오기").setCallbackData(BotCallbackData.settingimport.name()));
+	        rowsInline.add(rowInline);
 	        
 	        markupInline.setKeyboard(rowsInline);
 	        message.setReplyMarkup(markupInline);

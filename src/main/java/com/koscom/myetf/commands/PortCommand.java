@@ -69,16 +69,18 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfportion/" + GetChatId().toString() + "/" + data.strAccount);
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + GetChatId().toString() + "/" + data.strAccount);
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
+			int totalMoney = 0;
 			for(int i=0;i<jsonarr.size();i++){
 				String subJsonStr = jsonarr.get(i).toString();
 				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
 				String sectorCode = subJsonObj.get("sectorCode").toString();
-				int sectorRate = (int) Float.parseFloat(subJsonObj.get("sectorPortion").toString());
-				
+				int sectorQ = (int) Float.parseFloat(subJsonObj.get("sectorPossession").toString());
+				totalMoney += getPrice(sectorCode) * sectorQ;
+
 				String name = "";
 				if( "999999".equals(sectorCode) )
 				{
@@ -88,7 +90,15 @@ public class PortCommand extends MyetfCommand{
 				{
 					name = getProdName(sectorCode);
 				}
-				arSector.add(new sector(sectorRate, name, arColors.size() > i ? arColors.get(i) : Color.black));
+				arSector.add(new sector(sectorQ, name, arColors.size() > i ? arColors.get(i) : Color.black));
+			}
+			
+			if(totalMoney != 0)
+			{
+				for(sector sec : arSector)
+				{
+					sec.nRate *= 100.f / totalMoney;
+				}	
 			}
 			
 		} catch (Exception e2) {

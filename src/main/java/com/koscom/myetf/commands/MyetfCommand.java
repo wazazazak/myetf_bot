@@ -178,6 +178,7 @@ public abstract class MyetfCommand {
 	 * @return
 	 */
 	public double getPrice(String issuecode) {
+		if(issuecode.compareTo("999999") == 0) return 1;
 		BufferedReader br = null;
 		double price = 0;
 		
