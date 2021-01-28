@@ -68,12 +68,16 @@ public class SettingImportExeCommand extends MyetfCommand{
             	System.out.println("sectorCodeGroup >> " + sectorCodeGroup);
             	System.out.println("sectorPortionGroup >> " + sectorPortionGroup);
             	
-            	String[] sectorCodeGroupArr = sectorCodeGroup.split("|");
-            	String[] sectorPortionGroupArr = sectorPortionGroup.split("|");
+            	for(String strKey : data.mSectorRates.keySet())
+            	{
+            		data.mSectorRates.put(strKey, 0);
+            	}
+            	String[] sectorCodeGroupArr = StringUtils.split(sectorCodeGroup, '|');
+            	String[] sectorPortionGroupArr = StringUtils.split(sectorPortionGroup, '|');
             	for(int i=0; i<sectorCodeGroupArr.length; i++ ) {
             		System.out.println(i + "번째 sectorCode >> " + sectorCodeGroupArr[i]);
-                	System.out.println(i + "번째 sectorPortion >> " + Integer.parseInt(sectorPortionGroupArr[i]));
-            		m_telebot.mSessionData.get(GetChatId().toString()).mSectorRates.put(sectorCodeGroupArr[i], Integer.parseInt(sectorPortionGroupArr[i]));
+                	System.out.println(i + "번째 sectorPortion >> " + Float.parseFloat(sectorPortionGroupArr[i]));
+                	data.mSectorRates.put(sectorCodeGroupArr[i], (int) Float.parseFloat(sectorPortionGroupArr[i]));
             	}
             	
             	data.strState = BotCallbackData.setting.name();
@@ -104,36 +108,6 @@ public class SettingImportExeCommand extends MyetfCommand{
     	        cmd.execute();
     	        
             }
-			
-//	        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-//	        List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
-//	        List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-//	        int count = 0;
-//	        for(String strKey : arOrdered){ //저장된 key값 확인
-//	        	if(count % 2 == 0)
-//	        	{
-//	        		if(!rowInline.isEmpty())
-//	        		{
-//	            		rowsInline.add(rowInline);
-//	            		rowInline = new ArrayList<>();
-//	        		}
-//	        	}
-//	        	++count;
-//	    		String name = getProdName(strKey);
-//	    		if(name.contains("KODEX ")) name = name.substring(6);
-//	    		name += ( " (" + data.mSectorRates.get(strKey) + "%)");
-//		        rowInline.add(new InlineKeyboardButton().setText(name).setCallbackData(BotCallbackData.settingarg.name() + ":" + strKey));
-//	        }
-//	
-//			rowsInline.add(rowInline);
-//			rowInline = new ArrayList<>();
-//	    	rowInline.add(new InlineKeyboardButton().setText("저장").setCallbackData(BotCallbackData.settingarg.name() + ":1"));
-//	    	rowInline.add(new InlineKeyboardButton().setText("취소").setCallbackData(BotCallbackData.settingarg.name() + ":0"));
-//	        rowsInline.add(rowInline);
-//	        
-//
-        	//data.strState = BotCallbackData.setting.name();
-            //m_telebot.execute(message);
             
             
         } catch (TelegramApiException e) {
