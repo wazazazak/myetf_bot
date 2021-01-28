@@ -79,7 +79,8 @@ public class PortCommand extends MyetfCommand{
 				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
 				String sectorCode = subJsonObj.get("sectorCode").toString();
 				int sectorQ = (int) Float.parseFloat(subJsonObj.get("sectorPossession").toString());
-				totalMoney += getPrice(sectorCode) * sectorQ;
+				int nMoney = (int) (getPrice(sectorCode) * sectorQ);
+				totalMoney += nMoney;
 
 				String name = "";
 				if( "999999".equals(sectorCode) )
@@ -90,14 +91,14 @@ public class PortCommand extends MyetfCommand{
 				{
 					name = getProdName(sectorCode);
 				}
-				arSector.add(new sector(sectorQ, name, arColors.size() > i ? arColors.get(i) : Color.black));
+				arSector.add(new sector(nMoney, name, arColors.size() > i ? arColors.get(i) : Color.black));
 			}
 			
 			if(totalMoney != 0)
 			{
 				for(sector sec : arSector)
 				{
-					sec.nRate *= 100.f / totalMoney;
+					sec.nRate = Math.round(sec.nRate * (100.f / totalMoney));
 				}	
 			}
 			

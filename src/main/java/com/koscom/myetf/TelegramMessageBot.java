@@ -79,13 +79,8 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 			mSectorRates.put("117460", 0);
 			mSectorRates.put("117680", 0);
 			mSectorRates.put("117700", 0);
-			mSectorRates.put("140700", 0);
-			mSectorRates.put("140710", 0);
-			mSectorRates.put("102960", 0);
 			mSectorRates.put("244580", 0);
 			mSectorRates.put("266370", 0);
-			mSectorRates.put("266420", 0);
-			mSectorRates.put("300950", 0);
 			mSectorRates.put("132030", 0);
 			mSectorRates.put("152380", 0);
 			mSectorRates.put("308620", 0);
