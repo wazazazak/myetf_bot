@@ -18,9 +18,9 @@ class PortfolioLoadDatabase {
   CommandLineRunner etfPortfolioinitDatabase(PortfolioRepository repository) {
 
     return args -> {
-	  	log.info("Preloading " + repository.save(new Portfolio("1502506769", "160635473367600099", "091180", 30)));
-	    log.info("Preloading " + repository.save(new Portfolio("1502506769", "160635473367600099", "091160", 50)));
-	    log.info("Preloading " + repository.save(new Portfolio("1502506769", "160635473367600099", "091170", 15)));
+	  	log.info("Preloading " + repository.save(new Portfolio("1502506769", "09port", "영구 포트폴리오", "251350|308620|999999|132030", "25.0|25.0|25.0|25.0")));
+	  	log.info("Preloading " + repository.save(new Portfolio("1502506769", "3070port", "3070", "308620|251350", "30.0|70.0")));
+	  	log.info("Preloading " + repository.save(new Portfolio("1502506769", "4060port", "4060", "308620|251350", "40.0|60.0")));
     };
   }
 }
