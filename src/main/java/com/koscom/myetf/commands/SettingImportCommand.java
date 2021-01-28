@@ -21,28 +21,6 @@ public class SettingImportCommand extends MyetfCommand{
 	public SettingImportCommand(TelegramLongPollingBot telebot, Update update) {
 		super(telebot, update);
 		// TODO Auto-generated constructor stub
-//		arOrdered.add("226490");
-//		arOrdered.add("229200");
-//		arOrdered.add("305720");
-//		arOrdered.add("091160");
-//		arOrdered.add("091170");
-//		arOrdered.add("091180");
-//		arOrdered.add("102970");
-//		arOrdered.add("117460");
-//		arOrdered.add("117680");
-//		arOrdered.add("117700");
-//		arOrdered.add("140700");
-//		arOrdered.add("140710");
-//		arOrdered.add("102960");
-//		arOrdered.add("244580");
-//		arOrdered.add("266370");
-//		arOrdered.add("266420");
-//		arOrdered.add("300950");
-//		arOrdered.add("132030");
-//		arOrdered.add("152380");
-//		arOrdered.add("308620");
-//		arOrdered.add("999999");
-		
 		arOrdered.add("226490");
 		arOrdered.add("229200");
 		arOrdered.add("305720");
@@ -58,6 +36,7 @@ public class SettingImportCommand extends MyetfCommand{
 		arOrdered.add("132030");
 		arOrdered.add("152380");
 		arOrdered.add("308620");
+		arOrdered.add("251350");
 		arOrdered.add("999999");
 		
 	}
