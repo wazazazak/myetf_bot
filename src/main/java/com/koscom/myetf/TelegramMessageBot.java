@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -119,11 +120,21 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 				AccountCommand accountCommand = new AccountCommand(this, update);
 				accountCommand.execute();
 			}
-			if(StringUtils.left(mSessionData.get(strChatId).strState, BotCallbackData.settingarg.name().length() + 1)
-			.compareToIgnoreCase(BotCallbackData.settingarg.name() + ":") == 0)
+			else if(mSessionData.get(strChatId) != null && mSessionData.get(strChatId).strState.contains(BotCallbackData.settingarg.name()))
 			{
 				SettingRateCommand srCommand = new SettingRateCommand(this, update);
 				srCommand.execute();
+			}
+			else
+			{
+	            SendMessage message = new SendMessage();
+	            message.setChatId(update.getMessage().getChatId());
+	            message.setText("잘못된 명령입니다.\n/Start");
+	            try {
+	                execute(message);
+	            } catch (TelegramApiException e) {
+	                e.printStackTrace();
+	            }
 			}
 		}
 		if (update.hasCallbackQuery()) {

@@ -81,7 +81,7 @@ public class SettingArgCommand extends MyetfCommand{
         				String strJsonPossession = jsonObjPossession.toJSONString();
         				String resultJson = new String();
         				String jsonHoldQt = new String();
-    					jsonHoldQt = sendGet("http://localhost:8000/etfportion/"+ GetChatId().toString() + "/" + data.strAccount);
+    					jsonHoldQt = sendGet("http://localhost:8000/etfportion/"+ GetChatId().toString() + "/" + data.strAccount + "/" + strKey);
         				if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
         					
         					// [ETF_POSSESSION] update (PUT)
