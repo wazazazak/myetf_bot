@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
 import com.koscom.myetf.commands.AccountCommand;
 import com.koscom.myetf.commands.MenuCommand;
 import com.koscom.myetf.commands.PortCommand;
@@ -25,17 +27,24 @@ import com.koscom.myetf.commands.SettingCommand;
 
 @Component
 public class TelegramMessageBot extends TelegramLongPollingBot { //
-//    private final String BOT_NAME = "myetf_bot"; //Bot Name
-//    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
+    private final String BOT_NAME = "myetf_bot"; //Bot Name
+    private final String AUTH_KEY = "1573207271:AAEJPCeEhVU4O59zVZI2xzZ1T1PebgceaBE"; //Bot Auth-Key
 
 	// 한이
-    private final String BOT_NAME = "myETF_testBot"; //Bot Name
-    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
+//    private final String BOT_NAME = "myETF_testBot"; //Bot Name
+//    private final String AUTH_KEY = "1435740482:AAHP7NH8H_7hNPYhZGe7WcjGUMeQW4rQf9k"; //Bot Auth-Key
 
 	// 기혁
 //	private final String BOT_NAME = "myetftestbot"; // Bot Name
 //	private final String AUTH_KEY = "1617147400:AAGgo9RAT8JG7nHCSJhuSgRohxyRPjkS3MY"; // Bot Auth-Key
 
+
+	public TelegramMessageBot() {
+		super();
+		mSessionData = new HashMap<String, CSessionData>();
+		// TODO Auto-generated constructor stub
+	}
+    
 	@Override
 	public String getBotUsername() {
 		return BOT_NAME;
@@ -49,7 +58,15 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 	public enum BotCallbackData {
 		rebal, myport, account, setting, menu, settingarg
 	}
-
+	
+	public class CSessionData
+	{
+		public String strState;
+		public String strAccount;
+		public String strSettingCode;
+	}
+	
+	public HashMap<String, CSessionData> mSessionData;
 	/**
 	 * 메세지를 받으면 처리하는 로직
 	 * 
@@ -67,33 +84,51 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 //				e.printStackTrace();
 //			}
 			if (update.getMessage().getText().compareToIgnoreCase("/start") == 0) {
+				String strChatId = update.getMessage().getChatId().toString();
+				mSessionData.put(strChatId, new CSessionData());
 				AccountCommand accountCommand = new AccountCommand(this, update);
 				accountCommand.execute();
 			}
 		}
 		if (update.hasCallbackQuery()) {
+			
 			CallbackQuery callbackquery = update.getCallbackQuery();
 			String stringMessage = callbackquery.getData();
 
-			if (StringUtils.left(stringMessage, BotCallbackData.menu.name().length() + 1)
-					.compareToIgnoreCase(BotCallbackData.menu.name() + ":") == 0) {
+			String strChatId = callbackquery.getMessage().getChatId().toString();
+			if(!mSessionData.containsKey(strChatId)) return;
+			CSessionData data = mSessionData.get(strChatId);
+			data.strState.compareTo(BotCallbackData.account.name());
+			
+			if (StringUtils.left(stringMessage, BotCallbackData.menu.name().length())
+					.compareToIgnoreCase(BotCallbackData.menu.name()) == 0 
+					&& (data.strState.compareTo(BotCallbackData.account.name()) == 0
+					|| data.strState.compareTo(BotCallbackData.myport.name()) == 0)) {
+				data.strAccount = stringMessage.substring(BotCallbackData.menu.name().length() + 1);
 				MenuCommand menuCommand = new MenuCommand(this, update);
 				menuCommand.execute();
 			}
 			else if (StringUtils.left(stringMessage, BotCallbackData.settingarg.name().length() + 1)
-					.compareToIgnoreCase(BotCallbackData.settingarg.name() + ":") == 0) {
+					.compareToIgnoreCase(BotCallbackData.settingarg.name() + ":") == 0
+					&& data.strState.compareTo(BotCallbackData.setting.name()) == 0) {
+				data.strSettingCode = stringMessage.substring(BotCallbackData.settingarg.name().length() + 1);
 				SettingArgCommand settingArgCommand = new SettingArgCommand(this, update);
 				settingArgCommand.execute();
 			} 
-			else if (BotCallbackData.rebal.name().compareToIgnoreCase(stringMessage) == 0) {
+			else if (BotCallbackData.rebal.name().compareToIgnoreCase(stringMessage) == 0
+					&& (data.strState.compareTo(BotCallbackData.myport.name()) == 0
+					|| data.strState.compareTo(BotCallbackData.settingarg.name()) == 0)) {
 				RebalCommand rebalCommand = new RebalCommand(this, update);
 				rebalCommand.execute();
 			}
-			else if (BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0) {
+			else if (BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0
+					&& data.strState.compareTo(BotCallbackData.menu.name()) == 0) {
 				PortCommand portCommand = new PortCommand(this, update);
 				portCommand.execute();
 			}
-			else if (BotCallbackData.setting.name().compareToIgnoreCase(stringMessage) == 0) {
+			else if (BotCallbackData.setting.name().compareToIgnoreCase(stringMessage) == 0
+					&& (data.strState.compareTo(BotCallbackData.menu.name()) == 0
+					|| data.strState.compareTo(BotCallbackData.settingarg.name()) == 0)) {
 				SettingCommand settingCommand = new SettingCommand(this, update);
 				settingCommand.execute();
 			}

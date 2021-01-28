@@ -30,6 +30,8 @@ class EtfPossessionLoadDatabase {
         log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "091170", 80)));
         log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "091170", 90)));
         log.info("Preloading " + repository.save(new EtfPossession("1351754505", "160657695589800099", "999999", 20)));
+        log.info("Preloading " + repository.save(new EtfPossession("1560682736", "160657695589888888", "999999", 80000000)));
+        log.info("Preloading " + repository.save(new EtfPossession("1560682736", "160657695589888877", "999999", 50000000)));
     };
   }
 }

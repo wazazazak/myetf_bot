@@ -175,6 +175,8 @@ public class RebalCommand extends MyetfCommand{
 			
 			m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
+			MenuCommand menuCommand = new MenuCommand(m_telebot, m_update);
+			menuCommand.execute();
 			
 		} catch (TelegramApiException e) {
 			e.printStackTrace();

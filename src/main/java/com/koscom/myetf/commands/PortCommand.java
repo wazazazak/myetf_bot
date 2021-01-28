@@ -29,6 +29,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
+import com.koscom.myetf.TelegramMessageBot.CSessionData;
 
 public class PortCommand extends MyetfCommand{
 	public PortCommand(TelegramLongPollingBot telebot, Update update) {
@@ -65,7 +66,8 @@ public class PortCommand extends MyetfCommand{
         answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
         answerCallbackQuery.setShowAlert(false);
         answerCallbackQuery.setText("");
-
+        
+        CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
 
 		String jsonTxt = new String();
 
@@ -73,7 +75,7 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
@@ -118,12 +120,16 @@ public class PortCommand extends MyetfCommand{
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
         List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-        rowInline.add(new InlineKeyboardButton().setText("리밸런싱하시겠습니까?").setCallbackData(BotCallbackData.rebal.name()));
+        rowInline.add(new InlineKeyboardButton().setText("리밸런싱 하시겠습니까?").setCallbackData(BotCallbackData.rebal.name()));
         rowsInline.add(rowInline);
+        List < InlineKeyboardButton > rowInline2 = new ArrayList < > ();
+        rowInline2.add(new InlineKeyboardButton().setText("취소").setCallbackData(BotCallbackData.menu.name() + ":" + data.strAccount));
+        rowsInline.add(rowInline2);
         markupInline.setKeyboard(rowsInline);
         photo.setReplyMarkup(markupInline);
         
         try {
+        	data.strState = BotCallbackData.myport.name();
             m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(photo);
         } catch (TelegramApiException e) {

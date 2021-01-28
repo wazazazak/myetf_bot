@@ -13,15 +13,17 @@ import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import com.koscom.myetf.TelegramMessageBot;
+
 public abstract class MyetfCommand {
 	
-	TelegramLongPollingBot m_telebot;
+	TelegramMessageBot m_telebot;
 	Update m_update;
 	
 	public abstract void execute();
 	
 	public MyetfCommand(TelegramLongPollingBot telebot, Update update) {
-		m_telebot = telebot;
+		m_telebot = (TelegramMessageBot)telebot;
 		m_update = update;
     }
 	
