@@ -1,3 +1,7 @@
+나만의 ETF (MYETF)<br>
+
+TELEGRAM을 기반으로 포트폴리오를 설정하여 리밸런싱을 할 수 있고 사람들과 포트폴리오를 공유할 수 있습니다.<br>
+
 local : http://localhost:8000<br>
 ec2 : http://15.164.171.236:8000<br>
 
