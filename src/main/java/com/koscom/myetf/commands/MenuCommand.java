@@ -46,6 +46,7 @@ public class MenuCommand extends MyetfCommand{
 			// 1. 현재 자산 총액 구하기
 			// 보유주 * 현재 시세 = 보유주식의 총액
 			// + 예수금 총액
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + GetChatId().toString() + "/" + data.strAccount);
 			double totalAmt = getTotalAmt(jsonTxt);
 
 	        SendMessage message = new SendMessage();
