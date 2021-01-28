@@ -29,7 +29,7 @@ class EtfPortionLoadDatabase {
 	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "091150", 20)));
 	    log.info("Preloading " + repository.save(new EtfPortion("1502506769", "160646584478700099", "999999", 10)));
 	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "091170", 50)));
-	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "091170", 45)));
+	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "091180", 45)));
 	    log.info("Preloading " + repository.save(new EtfPortion("1351754505", "160657695589800099", "999999", 5)));
 	    log.info("Preloading " + repository.save(new EtfPortion("1560682736", "160657695589888888", "999999", 100)));
 	    log.info("Preloading " + repository.save(new EtfPortion("1560682736", "160657695589888877", "999999", 100)));

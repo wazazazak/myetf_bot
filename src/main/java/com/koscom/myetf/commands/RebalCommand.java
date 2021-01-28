@@ -3,6 +3,8 @@ package com.koscom.myetf.commands;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import com.koscom.myetf.TelegramMessageBot.CSessionData;
+
 public class RebalCommand extends MyetfCommand{
 	public RebalCommand(TelegramLongPollingBot telebot, Update update) {
 		super(telebot, update);
@@ -28,12 +32,47 @@ public class RebalCommand extends MyetfCommand{
 	{
 		try {
 			
+			CallbackQuery callbackquery = m_update.getCallbackQuery();
+	        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
+	        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
+	        answerCallbackQuery.setShowAlert(false);
+	        answerCallbackQuery.setText("");
+	        CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
+			
+	        // 계좌 정보 없으면 start 상태로 되돌아감
+//	        if( StringUtils.isAllBlank(callbackquery.getMessage().getChatId().toString()) 
+//	        	|| StringUtils.isAllBlank(data.strAccount) ) {
+//	        	AccountCommand accountCommand = new AccountCommand(this, update);
+//	        	accountCommand.execute();
+//	        }
+	        
+	        
 			String jsonTxt = new String();
 			
 			// 0. DB - 보유 주식 수 조회
 			/* etfpossession/chatId/account */
 			// 계좌별 보유 주식수 조회
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
+			//jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
+			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
+			
+			// 보유 섹터
+			HashSet<String> hsHoldSec = new HashSet<String>();
+			JSONParser jsonParserHs = new JSONParser();
+			JSONArray jsonarr = (JSONArray)jsonParserHs.parse(jsonTxt);
+			for(int i=0;i<jsonarr.size();i++){
+				System.out.println("[json] sectorPossession >> " + jsonarr.get(i));
+				
+				String subJsonStr = jsonarr.get(i).toString();
+				JSONObject subJsonObj = (JSONObject) jsonParserHs.parse(subJsonStr);
+				//System.out.println("trdPrc >> " + resultObject.get("trdPrc"));
+				String sectorCode = subJsonObj.get("sectorCode").toString();
+				System.out.println("[value] sectorCode >> " + sectorCode);
+				
+				// 현금 아닐 때
+				if( "999999".equals(sectorCode) == false ) {
+					hsHoldSec.add(sectorCode);
+				}
+			}
 			
 			/*
 			 *       종목     | 종목코드 | 보유수량
@@ -63,7 +102,8 @@ public class RebalCommand extends MyetfCommand{
 			String resultMsgRebal = new String();	// 리밸런싱 결과 메시지
 			
 			// 목표 포트폴리오 비중 조회
-			jsonTxt = sendGet("http://localhost:8000/etfportion/1502506769/160635473367600099");
+			//jsonTxt = sendGet("http://localhost:8000/etfportion/1502506769/160635473367600099");
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
 			
 			// 매수/매도 종목코드(sectorCode), 종목명(sectorName), 가격(price), 수량(quantity) 저장 Map List
 			// -> 남는 금액을 예수금으로,,
@@ -75,7 +115,7 @@ public class RebalCommand extends MyetfCommand{
 			for(int i=0;i<jsonArr.size();i++) {
 				System.out.println("[json] jsonArr >> " + jsonArr.get(i));
 				
-				// 매수/매도 가격(price), 수량(Quantity) 저장
+				// 매수/매도 가격(price), 수량(quantity) 저장
 				Map<String, Object> map = new HashMap<String, Object>();
 				
 				String subJsonStr = jsonArr.get(i).toString();
@@ -83,6 +123,7 @@ public class RebalCommand extends MyetfCommand{
 				//System.out.println("trdPrc >> " + resultObject.get("trdPrc"));
 				String sectorCode = subJsonObj.get("sectorCode").toString();
 				System.out.println("[jsonArr] sectorCode >> " + sectorCode);
+				hsHoldSec.remove(sectorCode);
 				
 				String sectorPortion = subJsonObj.get("sectorPortion").toString();
 				System.out.println("[jsonArr] sectorPortion >> " + sectorPortion);
@@ -112,7 +153,8 @@ public class RebalCommand extends MyetfCommand{
 					// 종목별 보유 수량 조회
 					/* /etfpossession/{chatId}/{account}/{sectorCode} */
 					String jsonHoldQt = new String();
-					jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/"+sectorCode);
+					//jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/"+sectorCode);
+					jsonHoldQt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount + "/" + sectorCode);
 					
 					if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
 						Object objHoldQt = jsonParser.parse(jsonHoldQt);
@@ -138,8 +180,8 @@ public class RebalCommand extends MyetfCommand{
 					
 					JSONObject jsonObjPossession = new JSONObject();
 					//jsonObj.put("chatId", m_update.getMessage().getChatId());
-					jsonObjPossession.put("chatId"		, "1502506769");
-					jsonObjPossession.put("account"		, "160635473367600099");
+					jsonObjPossession.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+					jsonObjPossession.put("account"		, data.strAccount);
 					jsonObjPossession.put("sectorCode"	, sectorCode);
 					jsonObjPossession.put("sectorPossession"	, targetQt);
 					String strJsonPossession = jsonObjPossession.toJSONString();
@@ -193,8 +235,10 @@ public class RebalCommand extends MyetfCommand{
 						
 						JSONObject jsonObjTran = new JSONObject();
 						//jsonObj.put("chatId", m_update.getMessage().getChatId());
-						jsonObjTran.put("chatId"		, "1502506769");
-						jsonObjTran.put("account"		, "160635473367600099");
+//						jsonObjTran.put("chatId"		, "1502506769");
+//						jsonObjTran.put("account"		, "160635473367600099");
+						jsonObjTran.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+						jsonObjTran.put("account"		, data.strAccount);
 						jsonObjTran.put("sectorCode"	, sectorCode);
 						jsonObjTran.put("sellBuyDiv"	, "2" );	// 1:매도, 2:매수 
 						jsonObjTran.put("quantity"		, buyQt);
@@ -219,8 +263,10 @@ public class RebalCommand extends MyetfCommand{
 						
 						JSONObject jsonObjTran = new JSONObject();
 						//jsonObj.put("chatId", m_update.getMessage().getChatId());
-						jsonObjTran.put("chatId"		, "1502506769");
-						jsonObjTran.put("account"		, "160635473367600099");
+//						jsonObjTran.put("chatId"		, "1502506769");
+//						jsonObjTran.put("account"		, "160635473367600099");
+						jsonObjTran.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+						jsonObjTran.put("account"		, data.strAccount);
 						jsonObjTran.put("sectorCode"	, sectorCode);
 						jsonObjTran.put("sellBuyDiv"	, "1" );	// 1:매도, 2:매수 
 						jsonObjTran.put("quantity"		, sellQt);
@@ -249,6 +295,86 @@ public class RebalCommand extends MyetfCommand{
 			}
 			
 			/**
+			 * 2-5. 보유했던 섹터인데 목표 보유 섹터가 아닌 것 전량 매도
+			 * [ETF_POSSESSION] 최종 보유 수량 update
+			 */
+			Iterator<String> iter = hsHoldSec.iterator();	// Iterator 사용
+			while(iter.hasNext()) {//값이 있으면 true 없으면 false
+				String sectorCode = iter.next();
+			    System.out.println(sectorCode);
+			    
+			    // 종목별 보유 수량 조회
+				/* /etfpossession/{chatId}/{account}/{sectorCode} */
+				String jsonHoldQt = new String();
+				//jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/"+sectorCode);
+				jsonHoldQt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount + "/" + sectorCode);
+				
+				if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
+					Object objHoldQt = jsonParser.parse(jsonHoldQt);
+					JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;
+					//JSONObject jsonObjHoldQt = (JSONObject) jsonParser.parse(jsonHoldQt);
+					System.out.println("섹터 [" + jsonObjHoldQt.get("sectorCode") + "] 현재 보유 수량 >> " + jsonObjHoldQt.get("sectorPossession"));
+				} else {
+					System.out.println("섹터 [" + sectorCode + "] 현재 보유 수량 >> 미보유");
+				}
+				
+				// 보유 수량 (미보유시 0)
+				int holdingQt = 0;
+				if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
+					Object objHoldQt = jsonParser.parse(jsonHoldQt);
+					JSONObject jsonObjHoldQt = (JSONObject) objHoldQt;
+					holdingQt = Integer.parseInt(jsonObjHoldQt.get("sectorPossession").toString());
+				}
+				
+			    // 매도 수량
+				int sellQt = holdingQt;
+				System.out.println("섹터 [" + sectorCode + "] 매도 수량 >> " + sellQt);
+				
+				// 현재 시세를 반영한 목표 보유 종목별 수량
+				double sectorPrice = getPrice(sectorCode);		// [코스콤 API] 종목별 시세 조회 -> 종목 당 보유 자산 구하기
+				
+				/** [ETF_POSSESSION] update (PUT) */
+				JSONObject jsonObjPossession = new JSONObject();
+				//jsonObj.put("chatId", m_update.getMessage().getChatId());
+				jsonObjPossession.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+				jsonObjPossession.put("account"		, data.strAccount);
+				jsonObjPossession.put("sectorCode"	, sectorCode);
+				jsonObjPossession.put("sectorPossession"	, 0);
+				String strJsonPossession = jsonObjPossession.toJSONString();
+				
+				System.out.println("섹터 [" + sectorCode + "] 최종 수량 업데이트/인서트 >> " + strJsonPossession);
+				
+				String resultJson = new String();
+				if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
+					// [ETF_POSSESSION] update (PUT)
+					resultJson = sendPut("http://localhost:8000/etfpossession", strJsonPossession);
+				}
+				
+				/** [TRANSACTION_LOG] insert (POST) */
+				JSONObject jsonObjTran = new JSONObject();
+				//jsonObj.put("chatId", m_update.getMessage().getChatId());
+//				jsonObjTran.put("chatId"		, "1502506769");
+//				jsonObjTran.put("account"		, "160635473367600099");
+				jsonObjTran.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+				jsonObjTran.put("account"		, data.strAccount);
+				jsonObjTran.put("sectorCode"	, sectorCode);
+				jsonObjTran.put("sellBuyDiv"	, "1" );	// 1:매도, 2:매수 
+				jsonObjTran.put("quantity"		, sellQt);
+				jsonObjTran.put("price"			, sectorPrice);
+				String strJsonTran = jsonObjTran.toJSONString();
+				
+				// [TRANSACTION_LOG] insert (POST)
+				resultJson = sendPost("http://localhost:8000/transactionlog", strJsonTran);
+				
+				// [결과 메시지] 매도 수량
+				String sectorName = getProdName(sectorCode);		// [코스콤 API] 주식 종목 마스터 -> 종목명 조회
+		        DecimalFormat formatter = new DecimalFormat("###,###");	// 금액 포맷팅
+		     	String fmSectorPrice = formatter.format(sectorPrice);
+				resultMsgRebal += "[" + sectorName + "] 주당 가격 : " + fmSectorPrice + "원 / " + sellQt + "주 매도\n";
+			}
+			
+			
+			/**
 			 * 3. 매수/매도 후 남은 금액을 현금으로,,
 			 * 현자산 - 보유수량(금액) => 현금
 			 */
@@ -273,7 +399,8 @@ public class RebalCommand extends MyetfCommand{
 			// 현금 보유 수량 조회
 			/* /etfpossession/{chatId}/{account}/{sectorCode} */
 			String jsonHoldQt = new String();
-			jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/999999");
+			//jsonHoldQt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099/999999");
+			jsonHoldQt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount + "/999999");
 			
 			if( StringUtils.isNotBlank(jsonHoldQt) ) {	// 보유
 				Object objHoldQt = jsonParser.parse(jsonHoldQt);
@@ -290,8 +417,10 @@ public class RebalCommand extends MyetfCommand{
 			// 보유 상태면 PUT , 미보유상태면 POST
 			JSONObject jsonObjPossession = new JSONObject();
 			//jsonObj.put("chatId", m_update.getMessage().getChatId());
-			jsonObjPossession.put("chatId"		, "1502506769");
-			jsonObjPossession.put("account"		, "160635473367600099");
+//			jsonObjPossession.put("chatId"		, "1502506769");
+//			jsonObjPossession.put("account"		, "160635473367600099");
+			jsonObjPossession.put("chatId"		, callbackquery.getMessage().getChatId().toString());
+			jsonObjPossession.put("account"		, data.strAccount);
 			jsonObjPossession.put("sectorCode"	, "999999");
 			jsonObjPossession.put("sectorPossession"	, cashAmt);
 			String strJsonPossession = jsonObjPossession.toJSONString();
@@ -314,13 +443,6 @@ public class RebalCommand extends MyetfCommand{
 			}
 			System.out.println("현금 최종 수량 업데이트/인서트 결과 >> " + resultJson);
 			
-			
-			CallbackQuery callbackquery = m_update.getCallbackQuery();
-			AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-			answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-			answerCallbackQuery.setShowAlert(false);
-			answerCallbackQuery.setText("");
-			
 			SendMessage message = new SendMessage();
 //		        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 //		        List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
@@ -337,12 +459,11 @@ public class RebalCommand extends MyetfCommand{
 			
 //			String msgText = new String();
 			resultMsgRebal += "리밸런싱 완료!";
-			resultMsgRebal += "\n현재 자산 총액은 "+ fmTotalAmt + "원입니다.";
+//			resultMsgRebal += "\n현재 자산 총액은 "+ fmTotalAmt + "원입니다.";
 			
 			message.setText(resultMsgRebal);
-			message.setChatId(callbackquery.getMessage().getChatId());
+			message.setChatId(GetChatId());
 			
-			m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
 			MenuCommand menuCommand = new MenuCommand(m_telebot, m_update);
 			menuCommand.execute();
@@ -352,6 +473,7 @@ public class RebalCommand extends MyetfCommand{
         } catch (Exception e){
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 }
 
