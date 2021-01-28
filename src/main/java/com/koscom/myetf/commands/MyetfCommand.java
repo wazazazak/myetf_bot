@@ -3,6 +3,7 @@ package com.koscom.myetf.commands;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -49,6 +50,92 @@ public abstract class MyetfCommand {
         System.out.println("HTTP body : " + response.toString());
         
     	// JSON 문자열 JAVA로 변환
+        String jsonTxt = response.toString();
+        
+        return jsonTxt;
+    }
+	
+	/**
+	 * DB INSERT
+	 * @param targetUrl
+	 * @param parameters
+	 * @throws Exception
+	 */
+	protected String sendPost(String targetUrl, String parameters) throws Exception {
+		URL url = new URL(targetUrl);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("POST"); // HTTP POST 메소드 설정 
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setRequestProperty("Accept", "application/json");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setDoOutput(true); // POST 파라미터 전달을 위한 설정
+        
+        System.out.println("Send post request  : " + targetUrl + " + " +parameters);
+        
+        // Send post request 
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(parameters);
+		wr.flush();
+		wr.close();
+		
+		int responseCode = con.getResponseCode();
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+		
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close(); 
+		
+        // print result 
+		System.out.println("HTTP 응답 코드 : " + responseCode);
+		System.out.println("HTTP body : " + response.toString());
+		
+		// JSON 문자열 JAVA로 변환
+        String jsonTxt = response.toString();
+        
+        return jsonTxt;
+    }
+	
+	/**
+	 * DB UPDATE
+	 * @param targetUrl
+	 * @param parameters
+	 * @throws Exception
+	 */
+	protected String sendPut(String targetUrl, String parameters) throws Exception {
+		URL url = new URL(targetUrl);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("PUT"); // HTTP POST 메소드 설정 
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setRequestProperty("Accept", "application/json");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setDoOutput(true); // POST 파라미터 전달을 위한 설정
+        
+        System.out.println("Send post request  : " + targetUrl + " + " +parameters);
+        
+        // Send post request 
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(parameters);
+		wr.flush();
+		wr.close();
+		
+		int responseCode = con.getResponseCode();
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+		
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close(); 
+		
+        // print result 
+		System.out.println("HTTP 응답 코드 : " + responseCode);
+		System.out.println("HTTP body : " + response.toString());
+		
+		// JSON 문자열 JAVA로 변환
         String jsonTxt = response.toString();
         
         return jsonTxt;
