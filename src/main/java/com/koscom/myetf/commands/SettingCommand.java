@@ -35,13 +35,8 @@ public class SettingCommand extends MyetfCommand{
 		arOrdered.add("117460");
 		arOrdered.add("117680");
 		arOrdered.add("117700");
-		arOrdered.add("140700");
-		arOrdered.add("140710");
-		arOrdered.add("102960");
 		arOrdered.add("244580");
 		arOrdered.add("266370");
-		arOrdered.add("266420");
-		arOrdered.add("300950");
 		arOrdered.add("132030");
 		arOrdered.add("152380");
 		arOrdered.add("308620");

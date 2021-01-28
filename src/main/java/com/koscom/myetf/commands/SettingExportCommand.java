@@ -75,6 +75,7 @@ public class SettingExportCommand extends MyetfCommand{
 			jsonObjPortfolio.put("sectorCodeGroup"		, sectorCodeGroup);	// 091180|091160|091170|999999
 			jsonObjPortfolio.put("sectorPortionGroup"	, sectorPortionGroup);	// 30.0|50.0|15.0|5.0
 			String strJsonTran = jsonObjPortfolio.toJSONString();
+			System.out.println("포트폴리오 비율 저장 >> "+strJsonTran);
 			
 			// [PORTFOLIO] insert (POST)
 			String resultJson = sendPost("http://localhost:8000/portfolio", strJsonTran);

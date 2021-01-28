@@ -25,6 +25,7 @@ import com.koscom.myetf.commands.SettingArgCommand;
 import com.koscom.myetf.commands.SettingCommand;
 import com.koscom.myetf.commands.SettingExportCommand;
 import com.koscom.myetf.commands.SettingImportCommand;
+import com.koscom.myetf.commands.SettingImportExeCommand;
 import com.koscom.myetf.commands.SettingRateCommand;
 
 @Component
@@ -58,7 +59,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 	}
 
 	public enum BotCallbackData {
-		rebal, myport, account, setting, menu, settingarg, settingtype, settingimport, settingexport, settingend
+		rebal, myport, account, setting, menu, settingarg, settingtype, settingimport, settingexport, settingend, settingimportexe
 	}
 	
 	public class CSessionData
@@ -79,13 +80,8 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 			mSectorRates.put("117460", 0);
 			mSectorRates.put("117680", 0);
 			mSectorRates.put("117700", 0);
-			mSectorRates.put("140700", 0);
-			mSectorRates.put("140710", 0);
-			mSectorRates.put("102960", 0);
 			mSectorRates.put("244580", 0);
 			mSectorRates.put("266370", 0);
-			mSectorRates.put("266420", 0);
-			mSectorRates.put("300950", 0);
 			mSectorRates.put("132030", 0);
 			mSectorRates.put("152380", 0);
 			mSectorRates.put("308620", 0);
@@ -123,6 +119,11 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 			else if(mSessionData.get(strChatId) != null && mSessionData.get(strChatId).strState.contains(BotCallbackData.settingarg.name()))
 			{
 				SettingRateCommand srCommand = new SettingRateCommand(this, update);
+				srCommand.execute();
+			}
+			else if(mSessionData.get(strChatId) != null && mSessionData.get(strChatId).strState.contains(BotCallbackData.settingimport.name()))
+			{
+				SettingImportExeCommand srCommand = new SettingImportExeCommand(this, update);
 				srCommand.execute();
 			}
 			else
