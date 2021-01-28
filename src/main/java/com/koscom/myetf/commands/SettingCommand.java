@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
+import com.koscom.myetf.TelegramMessageBot.CSessionData;
 
 public class SettingCommand extends MyetfCommand{
 	public SettingCommand(TelegramLongPollingBot telebot, Update update) {
@@ -50,6 +51,8 @@ public class SettingCommand extends MyetfCommand{
         answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
         answerCallbackQuery.setShowAlert(false);
         answerCallbackQuery.setText("");
+        
+        CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
 
         SendMessage message = new SendMessage();
 
@@ -83,6 +86,7 @@ public class SettingCommand extends MyetfCommand{
         message.setReplyMarkup(markupInline);
 
         try {
+        	data.strState = BotCallbackData.setting.name();
         	m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
         } catch (TelegramApiException e) {

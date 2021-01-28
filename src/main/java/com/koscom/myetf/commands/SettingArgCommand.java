@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
+import com.koscom.myetf.TelegramMessageBot.CSessionData;
 
 public class SettingArgCommand extends MyetfCommand{
 	public SettingArgCommand(TelegramLongPollingBot telebot, Update update) {
@@ -29,6 +30,7 @@ public class SettingArgCommand extends MyetfCommand{
         answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
         answerCallbackQuery.setShowAlert(false);
         answerCallbackQuery.setText("");
+        CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
         
         String strCallback = callbackquery.getData().toString().substring(BotCallbackData.settingarg.name().length() + 1);
         
@@ -50,6 +52,7 @@ public class SettingArgCommand extends MyetfCommand{
     		String name = getProdName(strCallback);
             message.setText(name + "의 비율을 입력하세요");
             try {
+            	data.strState = BotCallbackData.settingarg.name();
                 m_telebot.execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
