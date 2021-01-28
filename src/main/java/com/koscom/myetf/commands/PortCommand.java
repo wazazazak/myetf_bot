@@ -60,14 +60,8 @@ public class PortCommand extends MyetfCommand{
 	public List<Color> arColors;
 	
 	public void execute()
-	{
-        CallbackQuery callbackquery = m_update.getCallbackQuery();
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-        answerCallbackQuery.setShowAlert(false);
-        answerCallbackQuery.setText("");
-        
-        CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
+	{        
+        CSessionData data = m_telebot.mSessionData.get(GetChatId().toString());
 
 		String jsonTxt = new String();
 
@@ -75,7 +69,7 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfportion/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + GetChatId().toString() + "/" + data.strAccount);
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
@@ -113,7 +107,7 @@ public class PortCommand extends MyetfCommand{
 		}
         
         SendPhoto photo = new SendPhoto();
-        photo.setChatId(callbackquery.getMessage().getChatId());
+        photo.setChatId(GetChatId());
         photo.setCaption("포트폴리오");
         File file = new File(fileName);
         photo.setPhoto(file);
@@ -130,11 +124,11 @@ public class PortCommand extends MyetfCommand{
         
         try {
         	data.strState = BotCallbackData.myport.name();
-            m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(photo);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 
 	public class sector

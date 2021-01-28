@@ -66,13 +66,6 @@ public class PriceCommand extends MyetfCommand {
         	System.out.println(e.getMessage());
 		}
         
-        
-        CallbackQuery callbackquery = m_update.getCallbackQuery();
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-        answerCallbackQuery.setShowAlert(false);
-        answerCallbackQuery.setText("");
-        
         SendMessage message = new SendMessage();
 //        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 //        List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
@@ -81,15 +74,15 @@ public class PriceCommand extends MyetfCommand {
 //        rowsInline.add(rowInline);
 //        markupInline.setKeyboard(rowsInline);
 //        message.setReplyMarkup(markupInline);
-        message.setChatId(callbackquery.getMessage().getChatId());
+        message.setChatId(GetChatId());
         message.setText("현재 시세는 "+ price + "원입니다.");
         
         
         try {
-            m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 }

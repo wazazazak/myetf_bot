@@ -24,6 +24,7 @@ import com.koscom.myetf.commands.PortCommand;
 import com.koscom.myetf.commands.RebalCommand;
 import com.koscom.myetf.commands.SettingArgCommand;
 import com.koscom.myetf.commands.SettingCommand;
+import com.koscom.myetf.commands.SettingRateCommand;
 
 @Component
 public class TelegramMessageBot extends TelegramLongPollingBot { //
@@ -61,9 +62,38 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 	
 	public class CSessionData
 	{
+		CSessionData()
+		{
+			strState = "";
+			strAccount = "";
+			strSettingCode = "";
+			mSectorRates = new HashMap<String, Integer>();
+			mSectorRates.put("226490", 0);
+			mSectorRates.put("229200", 0);
+			mSectorRates.put("305720", 0);
+			mSectorRates.put("091160", 0);
+			mSectorRates.put("091170", 0);
+			mSectorRates.put("091180", 0);
+			mSectorRates.put("102970", 0);
+			mSectorRates.put("117460", 0);
+			mSectorRates.put("117680", 0);
+			mSectorRates.put("117700", 0);
+			mSectorRates.put("140700", 0);
+			mSectorRates.put("140710", 0);
+			mSectorRates.put("102960", 0);
+			mSectorRates.put("244580", 0);
+			mSectorRates.put("266370", 0);
+			mSectorRates.put("266420", 0);
+			mSectorRates.put("300950", 0);
+			mSectorRates.put("132030", 0);
+			mSectorRates.put("152380", 0);
+			mSectorRates.put("308620", 0);
+			mSectorRates.put("999999", 100);
+		}
 		public String strState;
 		public String strAccount;
 		public String strSettingCode;
+		public HashMap<String, Integer> mSectorRates;
 	}
 	
 	public HashMap<String, CSessionData> mSessionData;
@@ -83,11 +113,17 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
+			String strChatId = update.getMessage().getChatId().toString();
 			if (update.getMessage().getText().compareToIgnoreCase("/start") == 0) {
-				String strChatId = update.getMessage().getChatId().toString();
 				mSessionData.put(strChatId, new CSessionData());
 				AccountCommand accountCommand = new AccountCommand(this, update);
 				accountCommand.execute();
+			}
+			if(StringUtils.left(mSessionData.get(strChatId).strState, BotCallbackData.settingarg.name().length() + 1)
+			.compareToIgnoreCase(BotCallbackData.settingarg.name() + ":") == 0)
+			{
+				SettingRateCommand srCommand = new SettingRateCommand(this, update);
+				srCommand.execute();
 			}
 		}
 		if (update.hasCallbackQuery()) {

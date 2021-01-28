@@ -314,13 +314,6 @@ public class RebalCommand extends MyetfCommand{
 			}
 			System.out.println("현금 최종 수량 업데이트/인서트 결과 >> " + resultJson);
 			
-			
-			CallbackQuery callbackquery = m_update.getCallbackQuery();
-			AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-			answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-			answerCallbackQuery.setShowAlert(false);
-			answerCallbackQuery.setText("");
-			
 			SendMessage message = new SendMessage();
 //		        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 //		        List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
@@ -340,9 +333,8 @@ public class RebalCommand extends MyetfCommand{
 			resultMsgRebal += "\n현재 자산 총액은 "+ fmTotalAmt + "원입니다.";
 			
 			message.setText(resultMsgRebal);
-			message.setChatId(callbackquery.getMessage().getChatId());
+			message.setChatId(GetChatId());
 			
-			m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
 			MenuCommand menuCommand = new MenuCommand(m_telebot, m_update);
 			menuCommand.execute();
@@ -352,6 +344,7 @@ public class RebalCommand extends MyetfCommand{
         } catch (Exception e){
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 }
 

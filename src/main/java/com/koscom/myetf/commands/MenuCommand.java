@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -26,20 +29,12 @@ public class MenuCommand extends MyetfCommand{
 	{
 		
 		try {
-
-			CallbackQuery callbackquery = m_update.getCallbackQuery();
-	        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-	        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-	        answerCallbackQuery.setShowAlert(false);
-	        answerCallbackQuery.setText("");
-			CSessionData data = m_telebot.mSessionData.get(callbackquery.getMessage().getChatId().toString());
+			CSessionData data = m_telebot.mSessionData.get(GetChatId().toString());
 			
 			String jsonTxt = new String();
 			
 			// 0. DB - 보유 주식 수 조회
 			/* etfpossession/chatId/account */
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/" + callbackquery.getMessage().getChatId().toString() + "/" + data.strAccount);
-			
 			/*
 			 *       종목     | 종목코드 | 보유수량
 			 * -------------------------------
@@ -62,7 +57,7 @@ public class MenuCommand extends MyetfCommand{
 			msgText += "현재 자산 총액은 "+ fmTotalAmt + "원입니다.\n포트폴리오를 확인하시겠습니까?";
 
 			message.setText(msgText);
-	        message.setChatId(callbackquery.getMessage().getChatId());
+	        message.setChatId(GetChatId());
 	        
 	        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
 	        List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
@@ -76,13 +71,28 @@ public class MenuCommand extends MyetfCommand{
 	        message.setReplyMarkup(markupInline);
 			
 	        data.strState = BotCallbackData.menu.name();
-			m_telebot.execute(answerCallbackQuery);
             m_telebot.execute(message);
+
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + GetChatId().toString() + "/" + data.strAccount);
+
+			data.mSectorRates.forEach((key, value)
+				    -> data.mSectorRates.put(key, 0));
+			
+        	JSONParser jsonParser = new JSONParser();
+			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
+			for(int i=0;i<jsonarr.size();i++){
+				String subJsonStr = jsonarr.get(i).toString();
+				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
+				String sectorCode = subJsonObj.get("sectorCode").toString();
+				int sectorRate = (int) Float.parseFloat(subJsonObj.get("sectorPortion").toString());
+				data.mSectorRates.put(sectorCode, sectorRate);
+			}
 			
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 }
