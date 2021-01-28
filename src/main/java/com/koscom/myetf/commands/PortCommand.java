@@ -187,6 +187,7 @@ public class PortCommand extends MyetfCommand{
         
         for(sector s : arSector)
         {
+        	if(s.nRate == 0) continue;
             g2d.setColor(s.cColor);
             
             float dAngle = (float) Math.ceil(360 * 0.01 * s.nRate);

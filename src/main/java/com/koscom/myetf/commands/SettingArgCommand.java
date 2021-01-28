@@ -99,8 +99,8 @@ public class SettingArgCommand extends MyetfCommand{
         			
         		}
 				
-	        	RebalCommand rebalCommand = new RebalCommand(m_telebot, m_update);
-	        	rebalCommand.execute();
+	        	SettingEndCommand seCommand = new SettingEndCommand(m_telebot, m_update);
+	        	seCommand.execute();
         	}
         }
         else if(strCallback.compareTo("0") == 0)

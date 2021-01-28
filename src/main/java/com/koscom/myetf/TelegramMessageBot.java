@@ -3,7 +3,6 @@ package com.koscom.myetf;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -18,13 +17,13 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
 import com.koscom.myetf.commands.AccountCommand;
 import com.koscom.myetf.commands.MenuCommand;
 import com.koscom.myetf.commands.PortCommand;
 import com.koscom.myetf.commands.RebalCommand;
 import com.koscom.myetf.commands.SettingArgCommand;
 import com.koscom.myetf.commands.SettingCommand;
+import com.koscom.myetf.commands.SettingExportCommand;
 import com.koscom.myetf.commands.SettingRateCommand;
 
 @Component
@@ -58,7 +57,7 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 	}
 
 	public enum BotCallbackData {
-		rebal, myport, account, setting, menu, settingarg
+		rebal, myport, account, setting, menu, settingarg, settingtype, settingimport, settingexport, settingend
 	}
 	
 	public class CSessionData
@@ -169,7 +168,8 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 				rebalCommand.execute();
 			}
 			else if (BotCallbackData.myport.name().compareToIgnoreCase(stringMessage) == 0
-					&& data.strState.compareTo(BotCallbackData.menu.name()) == 0) {
+					&& (data.strState.compareTo(BotCallbackData.menu.name()) == 0
+					|| data.strState.compareTo(BotCallbackData.settingend.name()) == 0)) {
 				PortCommand portCommand = new PortCommand(this, update);
 				portCommand.execute();
 			}
@@ -178,6 +178,11 @@ public class TelegramMessageBot extends TelegramLongPollingBot { //
 					|| data.strState.compareTo(BotCallbackData.settingarg.name()) == 0)) {
 				SettingCommand settingCommand = new SettingCommand(this, update);
 				settingCommand.execute();
+			}
+			else if (BotCallbackData.settingexport.name().compareToIgnoreCase(stringMessage) == 0
+					&& data.strState.compareTo(BotCallbackData.settingend.name()) == 0) {
+				SettingExportCommand settingExCommand = new SettingExportCommand(this, update);
+				settingExCommand.execute();
 			}
 			else {
 				AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
