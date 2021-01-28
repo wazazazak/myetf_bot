@@ -26,4 +26,27 @@ class UserController {
     List<User> userByChatId(@PathVariable String chatId) {
         return repository.findByChatId(chatId);
     }
+    
+//    @PutMapping("/user/{chatId}")
+//    List<User> resetUserState(@PathVariable String chatId) {
+//    	List<User> userList = repository.findByChatId(chatId);
+//    	int listLen = userList.size();
+//    	for(int i=0; i<listLen; ++i) {
+//    		User user = userList.get(i);
+//    		user.setState(null);
+//    		repository.save(user);
+//    	}
+//    	
+//        return repository.findByChatId(chatId);
+//    }
+//    
+//    @PutMapping("/user/{chatId}/{account}/{state}")
+//    User userByChatId(@PathVariable String chatId, @PathVariable String account, @PathVariable String state) {
+//    	User user = repository.findByChatIdAndAccount(chatId, account);
+//    	user.setState(state);
+//    	repository.save(user);
+//    	
+//        return repository.findByChatIdAndAccount(chatId, account);
+//    }
+
 }

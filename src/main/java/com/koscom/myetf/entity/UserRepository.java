@@ -7,4 +7,5 @@ import com.koscom.myetf.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     public List<User> findByChatId(String chatId);
+//    public User findByChatIdAndAccount(String chatId, String account);
 }

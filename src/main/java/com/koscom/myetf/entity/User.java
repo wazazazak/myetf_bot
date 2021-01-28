@@ -17,6 +17,7 @@ public class User {
     private String account;
     private String accountName;
     private int totMoney;
+//    private String state;
 
     public User() {
     }
@@ -72,8 +73,16 @@ public class User {
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
 	}
+	
+//    public String getState() {
+//		return state;
+//	}
+//
+//	public void setState(String state) {
+//		this.state = state;
+//	}
 
-    @Override
+	@Override
     public String toString() {
         return "User{" +
                 "id=" + id +
