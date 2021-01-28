@@ -29,6 +29,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.koscom.myetf.TelegramMessageBot.BotCallbackData;
+import com.koscom.myetf.TelegramMessageBot.CSessionData;
 
 public class PortCommand extends MyetfCommand{
 	public PortCommand(TelegramLongPollingBot telebot, Update update) {
@@ -59,13 +60,8 @@ public class PortCommand extends MyetfCommand{
 	public List<Color> arColors;
 	
 	public void execute()
-	{
-        CallbackQuery callbackquery = m_update.getCallbackQuery();
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-        answerCallbackQuery.setShowAlert(false);
-        answerCallbackQuery.setText("");
-
+	{        
+        CSessionData data = m_telebot.mSessionData.get(GetChatId().toString());
 
 		String jsonTxt = new String();
 
@@ -73,7 +69,7 @@ public class PortCommand extends MyetfCommand{
 		// 0. DB - 보유 주식 수 조회
 		/* etfpossession/chatId/account */
 		try {
-			jsonTxt = sendGet("http://localhost:8000/etfpossession/1502506769/160635473367600099");
+			jsonTxt = sendGet("http://localhost:8000/etfportion/" + GetChatId().toString() + "/" + data.strAccount);
 
         	JSONParser jsonParser = new JSONParser();
 			JSONArray jsonarr = (JSONArray)jsonParser.parse(jsonTxt);
@@ -81,7 +77,7 @@ public class PortCommand extends MyetfCommand{
 				String subJsonStr = jsonarr.get(i).toString();
 				JSONObject subJsonObj = (JSONObject) jsonParser.parse(subJsonStr);
 				String sectorCode = subJsonObj.get("sectorCode").toString();
-				int sectorRate = Integer.parseInt(subJsonObj.get("sectorPossession").toString());
+				int sectorRate = (int) Float.parseFloat(subJsonObj.get("sectorPortion").toString());
 				
 				String name = "";
 				if( "999999".equals(sectorCode) )
@@ -111,24 +107,28 @@ public class PortCommand extends MyetfCommand{
 		}
         
         SendPhoto photo = new SendPhoto();
-        photo.setChatId(callbackquery.getMessage().getChatId());
+        photo.setChatId(GetChatId());
         photo.setCaption("포트폴리오");
         File file = new File(fileName);
         photo.setPhoto(file);
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List <List< InlineKeyboardButton >> rowsInline = new ArrayList< >();
         List < InlineKeyboardButton > rowInline = new ArrayList < > ();
-        rowInline.add(new InlineKeyboardButton().setText("리밸런싱하시겠습니까?").setCallbackData(BotCallbackData.rebal.name()));
+        rowInline.add(new InlineKeyboardButton().setText("리밸런싱 하시겠습니까?").setCallbackData(BotCallbackData.rebal.name()));
         rowsInline.add(rowInline);
+        List < InlineKeyboardButton > rowInline2 = new ArrayList < > ();
+        rowInline2.add(new InlineKeyboardButton().setText("취소").setCallbackData(BotCallbackData.menu.name() + ":" + data.strAccount));
+        rowsInline.add(rowInline2);
         markupInline.setKeyboard(rowsInline);
         photo.setReplyMarkup(markupInline);
         
         try {
-            m_telebot.execute(answerCallbackQuery);
+        	data.strState = BotCallbackData.myport.name();
             m_telebot.execute(photo);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+		AnswerQuery();
 	}
 
 	public class sector
@@ -187,6 +187,7 @@ public class PortCommand extends MyetfCommand{
         
         for(sector s : arSector)
         {
+        	if(s.nRate == 0) continue;
             g2d.setColor(s.cColor);
             
             float dAngle = (float) Math.ceil(360 * 0.01 * s.nRate);
